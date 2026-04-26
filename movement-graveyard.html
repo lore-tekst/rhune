@@ -777,13 +777,13 @@
 <div class="wrap">
   <div class="header">
     <div class="app-title">Mijn Bewegingskerkhof</div>
-    <div class="app-sub">elke beweging is een graf erbij</div>
+    <div class="app-sub">Elke beweging is een graf erbij</div>
     <div class="saved-indicator" id="saved-indicator">&nbsp;</div>
   </div>
 
   <div class="week-bar">
     <button class="week-nav-btn" id="prev-week" aria-label="vorige week">‹</button>
-    <div class="week-label" id="week-label">deze week</div>
+    <div class="week-label" id="week-label">Deze week</div>
     <button class="week-nav-btn" id="next-week" aria-label="volgende week">›</button>
   </div>
 
@@ -804,7 +804,7 @@
       <path d="M0,50 L0,38 Q80,28 160,34 Q240,38 320,30 Q400,24 470,32 Q540,40 620,32 Q670,28 700,32 L700,50 Z" fill="#14122A" opacity="0.95"/>
     </svg>
     <div class="garden-mist"></div>
-    <div class="garden-title">deze week op het kerkhof</div>
+    <div class="garden-title">Deze week op het kerkhof</div>
     <div class="garden-row" id="garden-row"></div>
     <div class="garden-soil"></div>
   </div>
@@ -812,11 +812,11 @@
   <div class="quick-add">
     <button class="quick-btn" data-quick="dog">
       <span class="ico">🐾</span>
-      <span>wandeling met de hond</span>
+      <span>Wandeling met de hond</span>
     </button>
     <button class="quick-btn" data-quick="volley">
       <span class="ico">🏐</span>
-      <span>volleybal</span>
+      <span>Volleybal</span>
     </button>
   </div>
 
@@ -829,13 +829,13 @@
   </div>
 
   <div class="footer-row">
-    voortgang automatisch opgeslagen op dit toestel
+    Voortgang automatisch opgeslagen op dit toestel
     <br>
-    <button class="footer-link" id="export-btn">backup exporteren</button>
+    <button class="footer-link" id="export-btn">Backup Exporteren</button>
     ·
-    <button class="footer-link" id="import-btn">backup importeren</button>
+    <button class="footer-link" id="import-btn">Backup Importeren</button>
     ·
-    <button class="footer-link" id="reset-all-btn">alles wissen</button>
+    <button class="footer-link" id="reset-all-btn">Alles Wissen</button>
   </div>
 </div>
 
@@ -843,46 +843,46 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-day" id="modal-day-label"></div>
-    <div class="modal-title" id="modal-title">beweging toevoegen</div>
+    <div class="modal-title" id="modal-title">Beweging toevoegen</div>
 
     <div class="field-section">
-      <div class="field-label">welke dag</div>
+      <div class="field-label">Welke dag</div>
       <div class="date-pick-row" id="date-picks"></div>
     </div>
 
     <div class="field-section">
-      <div class="field-label">wat heb je gedaan?</div>
+      <div class="field-label">Wat heb je gedaan?</div>
       <input class="what-input" id="what-input" type="text" placeholder="bijv. wandeling, dansen, fietsen..." maxlength="40" autocomplete="off">
       <div class="activity-suggs" id="activity-suggs"></div>
     </div>
 
     <div class="field-section">
-      <div class="field-label">hoe lang ongeveer</div>
+      <div class="field-label">Hoe lang ongeveer</div>
       <div class="duration-grid" id="duration-grid"></div>
     </div>
 
     <div class="field-section">
-      <div class="field-label">hoe voelde het?</div>
+      <div class="field-label">Hoe voelde het?</div>
       <div class="feeling-grid" id="feeling-grid"></div>
     </div>
 
     <div class="field-section">
-      <div class="field-label">notitie <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--pu4);">(optioneel)</span></div>
+      <div class="field-label">Notitie <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--pu4);">(optioneel)</span></div>
       <textarea class="note-input" id="note-input" placeholder="iets erbij vertellen? bijv. 'met mama gewandeld' of 'voelde even goed om buiten te zijn'" maxlength="240" rows="3"></textarea>
     </div>
 
-    <button class="save-btn" id="save-btn">begraaf op het kerkhof</button>
-    <button class="modal-close" id="modal-close">annuleren</button>
+    <button class="save-btn" id="save-btn">Begraaf op het kerkhof</button>
+    <button class="modal-close" id="modal-close">Annuleren</button>
   </div>
 </div>
 
 <div class="confirm-modal-bg" id="confirm-modal">
   <div class="confirm-modal">
-    <div class="confirm-title" id="confirm-title">zeker weten?</div>
+    <div class="confirm-title" id="confirm-title">Zeker weten?</div>
     <div class="confirm-text" id="confirm-text"></div>
     <div class="confirm-actions">
-      <button class="btn" id="confirm-cancel">annuleren</button>
-      <button class="btn btn-primary" id="confirm-ok">ja</button>
+      <button class="btn" id="confirm-cancel">Annuleren</button>
+      <button class="btn btn-primary" id="confirm-ok">Ja</button>
     </div>
   </div>
 </div>
@@ -903,32 +903,29 @@ const DAYS = [
 ];
 
 const ACTIVITY_TYPES = {
-  dog: { icon: '🐾', plant: '🪦', label: 'wandeling met de hond' },
-  volley: { icon: '🏐', plant: '🧟', label: 'volleybal' },
-  walk: { icon: '🚶', plant: '🪦', label: 'wandelen' },
-  bike: { icon: '🚴', plant: '⚰️', label: 'fietsen' },
-  yoga: { icon: '🧘', plant: '🪦', label: 'yoga' },
-  stretch: { icon: '✨', plant: '🕯️', label: 'rekken / stretchen' },
-  dance: { icon: '💃', plant: '🧟', label: 'dansen' },
-  swim: { icon: '🏊', plant: '⚰️', label: 'zwemmen' },
-  run: { icon: '🏃', plant: '🧟', label: 'lopen' },
-  garden: { icon: '🌷', plant: '🥀', label: 'tuinieren' },
-  other: { icon: '🌟', plant: '💀', label: 'iets anders' }
+  dog: { icon: '🐾', plant: '🪦', label: 'Wandeling met de hond' },
+  volley: { icon: '🏐', plant: '🧟', label: 'Volleybal' },
+  walk: { icon: '🚶', plant: '🪦', label: 'Wandelen' },
+  bike: { icon: '🚴', plant: '⚰️', label: 'Fietsen' },
+  dance: { icon: '💃', plant: '🧟', label: 'Dansen' },
+  swim: { icon: '🏊', plant: '⚰️', label: 'Zwemmen' },
+  run: { icon: '🏃', plant: '🧟', label: 'Lopen' },
+  other: { icon: '🌟', plant: '💀', label: 'Iets anders' }
 };
 
 const SUGGESTION_KEYS = ['dog','volley','walk','bike','yoga','stretch','dance','swim','run','garden'];
 
 const DURATIONS = [
-  { key: 'short', label: 'kort', sub: '< 15 min' },
-  { key: 'half', label: 'halfuurtje', sub: '~30 min' },
-  { key: 'hour', label: 'een uur', sub: '~60 min' },
-  { key: 'long', label: 'langer', sub: '> 1u' }
+  { key: 'short', label: 'Kort', sub: '< 15 min' },
+  { key: 'half', label: 'Halfuurtje', sub: '~30 min' },
+  { key: 'hour', label: 'Eenn uur', sub: '~60 min' },
+  { key: 'long', label: 'Langer', sub: '> 1u' }
 ];
 
 const FEELINGS = [
-  { key: 'fine', emoji: '💜', label: 'fijn' },
-  { key: 'ok', emoji: '🌿', label: 'oké' },
-  { key: 'heavy', emoji: '🥀', label: 'zwaar' }
+  { key: 'fine', emoji: '💜', label: 'Fijn' },
+  { key: 'ok', emoji: '🌿', label: 'Oké' },
+  { key: 'heavy', emoji: '🥀', label: 'Zwaar' }
 ];
 
 let state = {
@@ -1119,7 +1116,7 @@ function renderGarden() {
         <div class="garden-day-label">${day.short}</div>
       </div>`;
     });
-    row.innerHTML = emptyHTML + `<div class="garden-empty" style="position:absolute;top:50px;left:0;right:0;">het kerkhof is nog stil...<br>elke beweging voegt een graf toe</div>`;
+    row.innerHTML = emptyHTML + `<div class="garden-empty" style="position:absolute;top:50px;left:0;right:0;">Het kerkhof is nog stil...<br>Elke beweging voegt een graf toe</div>`;
   } else {
     row.innerHTML = html;
   }
@@ -1145,7 +1142,7 @@ function renderDaySections() {
       <div class="entry-list">`;
 
     if (entries.length === 0) {
-      html += `<div class="entry-empty">nog niets gelogd</div>`;
+      html += `<div class="entry-empty">Nog niets gelogd</div>`;
     } else {
       entries.forEach((e, idx) => {
         const icon = activityIconFor(e);
@@ -1169,7 +1166,7 @@ function renderDaySections() {
   });
 
   if (html === '') {
-    html = `<div class="entry-empty" style="padding:24px;">nog geen activiteiten deze week</div>`;
+    html = `<div class="entry-empty" style="padding:24px;">Nog geen activiteiten deze week</div>`;
   }
   cont.innerHTML = html;
 }
@@ -1201,7 +1198,7 @@ function openAddModal(prefilled) {
     modalState.what = ACTIVITY_TYPES[prefilled.typeKey].label;
   }
 
-  document.getElementById('modal-title').textContent = prefilled ? `${ACTIVITY_TYPES[prefilled.typeKey].icon} ${ACTIVITY_TYPES[prefilled.typeKey].label}` : 'beweging toevoegen';
+  document.getElementById('modal-title').textContent = prefilled ? `${ACTIVITY_TYPES[prefilled.typeKey].icon} ${ACTIVITY_TYPES[prefilled.typeKey].label}` : 'Beweging toevoegen';
   document.getElementById('what-input').value = modalState.what;
   document.getElementById('note-input').value = '';
   document.getElementById('modal-day-label').textContent = '';
@@ -1387,7 +1384,7 @@ function handleImportFile(e) {
         alert('Geen geldig backup-bestand.');
         return;
       }
-      showConfirm('data overschrijven?', 'alle huidige data wordt vervangen door de backup.', () => {
+      showConfirm('Data overschrijven?', 'Alle huidige data wordt vervangen door de backup.', () => {
         state.weeks = parsed.weeks || {};
         if (parsed.currentWeekKey) state.currentWeekKey = parsed.currentWeekKey;
         render();
@@ -1400,7 +1397,7 @@ function handleImportFile(e) {
 }
 
 function resetEverything() {
-  showConfirm('alles wissen?', 'alle weken en bewegingen worden definitief gewist. eerst exporteren als je iets wil bewaren!', () => {
+  showConfirm('Alles wissen?', 'Alle weken en bewegingen worden definitief gewist. Eerst exporteren als je iets wil bewaren!', () => {
     state.weeks = {};
     state.currentWeekKey = todayKey();
     ensureWeek(state.currentWeekKey);

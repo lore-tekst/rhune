@@ -849,20 +849,20 @@
 <div class="wrap">
   <div class="header">
     <div class="app-title">My Meal Plan</div>
-    <div class="app-sub">een week vol lekkers</div>
+    <div class="app-sub">Een week vol lekkers</div>
     <div class="saved-indicator" id="saved-indicator">&nbsp;</div>
   </div>
 
   <div class="week-bar">
     <button class="week-nav-btn" id="prev-week" aria-label="vorige week">‹</button>
-    <div class="week-label" id="week-label">deze week</div>
+    <div class="week-label" id="week-label">Deze Week</div>
     <button class="week-nav-btn" id="next-week" aria-label="volgende week">›</button>
   </div>
 
   <div class="actions">
-    <button class="btn" id="today-btn">vandaag</button>
-    <button class="btn" id="clear-week-btn">leeg deze week</button>
-    <button class="btn" id="copy-prev-btn">kopieer vorige week</button>
+    <button class="btn" id="today-btn">Vandaag</button>
+    <button class="btn" id="clear-week-btn">Leeg deze week</button>
+    <button class="btn" id="copy-prev-btn">Kopieer vorige week</button>
     <button class="btn btn-primary" id="dietician-btn">📋 voor diëtist</button>
   </div>
 
@@ -872,11 +872,11 @@
   <div class="footer-row">
     voortgang automatisch opgeslagen op dit toestel
     <br>
-    <button class="footer-link" id="export-btn">backup exporteren</button>
+    <button class="footer-link" id="export-btn">Backup Exporteren</button>
     ·
-    <button class="footer-link" id="import-btn">backup importeren</button>
+    <button class="footer-link" id="import-btn">Backup Importeren</button>
     ·
-    <button class="footer-link" id="reset-all-btn">alles wissen</button>
+    <button class="footer-link" id="reset-all-btn">Alles Wissen</button>
   </div>
 </div>
 
@@ -893,7 +893,7 @@
     <div class="modal-suggestions" id="modal-suggestions"></div>
     <div class="modal-note-section">
       <div class="modal-note-label">notitie <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--pu4);">(optioneel)</span></div>
-      <textarea class="meal-note-input" id="meal-note-input" placeholder="iets erbij vertellen? bijv. 'voelde goed' of 'samen met mama'" maxlength="240" rows="2"></textarea>
+      <textarea class="meal-note-input" id="meal-note-input" placeholder="Iets erbij vertellen? bijv. 'voelde goed' of 'uitlaatklep nodig'" maxlength="240" rows="2"></textarea>
     </div>
     <div class="modal-copy" id="modal-copy"></div>
     <button class="modal-close" id="modal-close">klaar</button>
@@ -906,17 +906,17 @@
     <div class="celebrate-emoji" id="celebrate-emoji">✨</div>
     <div class="celebrate-title" id="celebrate-title"></div>
     <div class="celebrate-text" id="celebrate-text"></div>
-    <button class="btn btn-primary celebrate-close">dankjewel!</button>
+    <button class="btn btn-primary celebrate-close">Dankjewel!</button>
   </div>
 </div>
 
 <div class="confirm-modal-bg" id="confirm-modal">
   <div class="confirm-modal">
-    <div class="confirm-title" id="confirm-title">zeker weten?</div>
+    <div class="confirm-title" id="confirm-title">Zeker weten?</div>
     <div class="confirm-text" id="confirm-text"></div>
     <div class="confirm-actions">
-      <button class="btn" id="confirm-cancel">annuleren</button>
-      <button class="btn btn-primary" id="confirm-ok">ja</button>
+      <button class="btn" id="confirm-cancel">Annuleren</button>
+      <button class="btn btn-primary" id="confirm-ok">Ja</button>
     </div>
   </div>
 </div>
@@ -925,33 +925,33 @@
   <div class="modal">
     <div class="modal-handle"></div>
     <div class="modal-day" id="copyday-source"></div>
-    <div class="modal-title">kopieer hele dag</div>
-    <div class="modal-copy-hint" style="text-align:center;margin-bottom:1rem;">tik dagen aan om alle maaltijden te kopieren</div>
+    <div class="modal-title">Kopieer hele dag</div>
+    <div class="modal-copy-hint" style="text-align:center;margin-bottom:1rem;">Tik dagen aan om alle maaltijden te kopieren</div>
     <div class="day-pills" id="copyday-pills"></div>
-    <button class="copy-btn" id="copyday-go" style="display:block;margin:0 auto 1rem;">kies dagen</button>
-    <button class="modal-close" id="copyday-close">annuleren</button>
+    <button class="copy-btn" id="copyday-go" style="display:block;margin:0 auto 1rem;">Kies dagen</button>
+    <button class="modal-close" id="copyday-close">Annuleren</button>
   </div>
 </div>
 
 <div class="modal-bg" id="export-modal">
   <div class="modal">
     <div class="modal-handle"></div>
-    <div class="modal-title">exporteren voor diëtist</div>
-    <div class="modal-copy-hint" style="text-align:center;margin-bottom:1rem;">een nette samenvatting van deze week om te delen</div>
+    <div class="modal-title">Exporteren voor diëtist</div>
+    <div class="modal-copy-hint" style="text-align:center;margin-bottom:1rem;">Een nette samenvatting van deze week om te delen</div>
 
     <div id="include-movement-section" style="display:none;background:var(--pu1);border-radius:11px;padding:12px 14px;margin-bottom:1rem;">
       <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--pu7);">
         <input type="checkbox" id="include-movement" style="width:18px;height:18px;accent-color:var(--pu5);cursor:pointer;">
-        <span>ook bewegingsdata van deze week meenemen</span>
+        <span>Ook bewegingsdata van deze week meenemen</span>
       </label>
     </div>
 
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;">
-      <button class="copy-btn" id="export-pdf" style="background:var(--pu5);">opslaan als PDF</button>
-      <button class="copy-btn" id="export-print" style="background:var(--pu4);">printen</button>
-      <button class="copy-btn" id="export-email" style="background:var(--pu6);">via mail versturen</button>
+      <button class="copy-btn" id="export-pdf" style="background:var(--pu5);">Opslaan als PDF</button>
+      <button class="copy-btn" id="export-print" style="background:var(--pu4);">Printen</button>
+      <button class="copy-btn" id="export-email" style="background:var(--pu6);">Via mail versturen</button>
     </div>
-    <button class="modal-close" id="export-close">annuleren</button>
+    <button class="modal-close" id="export-close">Annuleren</button>
   </div>
 </div>
 
@@ -985,7 +985,7 @@ const SUGGESTIONS = {
   tussen: ['Yoghurt met honing','Banaan met pindakaas','Granolareep','Notenmix','Smoothie','Mueslireep','Plak cake','Koek','Stuk fruit met yoghurt','Zaden- en notenkoek','Volkoren mueslireep','Boterham met choco','Studentenhaver','Reep chocolade','Energy ball'],
   brood: ['Boterham met hesp','Boterham met kaas','Boterham met choco','Boterham met pindakaas','Boterham met humus en avocado','Sandwich met kip-curry','Croque monsieur','Wrap met kip','Tosti ham-kaas','Boterham met smos','Boterham met paté','Boterham met salami','Bagel met cream cheese','Pita met falafel','Frans broodje'],
   laatje: ['Stukje chocolade','Yoghurt met granola','Banaan met pindakaas','Glas (warme) melk','Kop chocolademelk','Speculoos met thee','Stuk cake','Koekje met melk','Stukje fruit met noten','Mueslireep','Notenmix','Stuk kaas met druiven','Toast met honing','Halva','Marsepein'],
-  symptomen: ['Buikpijn','Hoofdpijn','Misselijk','Vermoeidheid','Opgeblazen gevoel','Reflux','Krampen','Hongerig','Voldaan','Goed gevoel','Slecht geslapen','Energie','Gestrest','Rustig','Verdrietig','Trots']
+  symptomen: ['Braken', 'Restrictie', 'Sporten']
 };
 
 let state = {
@@ -1223,7 +1223,7 @@ function renderMobile() {
       html += `<div class="mobile-meal-label">${escapeHTML(meal.short)}</div>`;
       html += `<div class="mobile-meal-items">`;
       if (items.length === 0 && !note) {
-        html += `<div style="color:var(--pu3);font-style:italic;">tik om toe te voegen</div>`;
+        html += `<div style="color:var(--pu3);font-style:italic;">Tik om toe te voegen</div>`;
       } else {
         items.forEach(it => {
           let stateCls = '';
@@ -1290,7 +1290,7 @@ function renderModalItems() {
   const items = state.weeks[state.currentWeekKey][openCell.dayKey][openCell.mealKey];
   const cont = document.getElementById('modal-items');
   if (items.length === 0) {
-    cont.innerHTML = '<div class="modal-empty">nog niets · voeg iets toe hieronder</div>';
+    cont.innerHTML = '<div class="modal-empty">Nog niets · Voeg iets toe hieronder</div>';
     return;
   }
   cont.innerHTML = items.map((it, i) => {
@@ -1337,13 +1337,13 @@ function renderCopySection() {
   const selectedCount = copyTargetDays.size;
 
   cont.innerHTML = `
-    <div class="modal-copy-label">kopieer naar andere dagen</div>
-    <div class="modal-copy-hint">tik dagen aan om dit ${escapeHTML(meal.short.toLowerCase())} te kopieren (vinkjes worden gereset)</div>
+    <div class="modal-copy-label">Kopieer naar andere dagen</div>
+    <div class="modal-copy-hint">Tik dagen aan om dit ${escapeHTML(meal.short.toLowerCase())} te kopieren (vinkjes worden gereset)</div>
     <div class="day-pills">
       ${otherDays.map(d => `<button class="day-pill ${copyTargetDays.has(d.key)?'selected':''}" data-copyday="${d.key}">${d.long.toLowerCase()}</button>`).join('')}
     </div>
     <button class="copy-btn" data-copygo="1" ${selectedCount===0?'disabled':''}>
-      ${selectedCount===0 ? 'kies dagen' : 'kopieer naar ' + selectedCount + ' ' + (selectedCount===1?'dag':'dagen')}
+      ${selectedCount===0 ? 'Kies dagen' : 'Kopieer naar ' + selectedCount + ' ' + (selectedCount===1?'dag':'dagen')}
     </button>
   `;
 }
@@ -1361,7 +1361,7 @@ function doCopyToOtherDays() {
 
   const targetDays = Array.from(copyTargetDays);
   showConfirm(
-    'kopieren bevestigen?',
+    'Kopieren bevestigen?',
     `${srcItems.length} item${srcItems.length===1?'':'s'} worden gekopieerd naar ${targetDays.length} ${targetDays.length===1?'dag':'dagen'}. Bestaande items op die dagen blijven staan.`,
     () => {
       targetDays.forEach(dayKey => {
@@ -1408,7 +1408,7 @@ function renderCopyDayPills() {
   const goBtn = document.getElementById('copyday-go');
   const n = copyDayTargets.size;
   goBtn.disabled = n === 0;
-  goBtn.textContent = n === 0 ? 'kies dagen' : `kopieer naar ${n} ${n===1?'dag':'dagen'}`;
+  goBtn.textContent = n === 0 ? 'Kies dagen' : `Kopieer naar ${n} ${n===1?'dag':'dagen'}`;
 }
 
 function toggleCopyDayTarget(dayKey) {
@@ -1432,7 +1432,7 @@ function doCopyFullDay() {
   }
 
   showConfirm(
-    'kopieren bevestigen?',
+    'Kopieren bevestigen?',
     `Alle maaltijden van deze dag (${totalItems} item${totalItems===1?'':'s'}) worden gekopieerd naar ${targets.length} ${targets.length===1?'dag':'dagen'}. Bestaande items op die dagen blijven staan.`,
     () => {
       targets.forEach(tgtDay => {
@@ -1468,26 +1468,23 @@ const MOVEMENT_ACTIVITY_TYPES = {
   volley: { icon: '🏐', label: 'volleybal' },
   walk: { icon: '🚶', label: 'wandelen' },
   bike: { icon: '🚴', label: 'fietsen' },
-  yoga: { icon: '🧘', label: 'yoga' },
-  stretch: { icon: '✨', label: 'rekken / stretchen' },
   dance: { icon: '💃', label: 'dansen' },
   swim: { icon: '🏊', label: 'zwemmen' },
   run: { icon: '🏃', label: 'lopen' },
-  garden: { icon: '🌷', label: 'tuinieren' },
   other: { icon: '🌟', label: 'iets anders' }
 };
 
 const MOVEMENT_DURATIONS = {
-  short: 'kort (< 15 min)',
-  half: 'halfuurtje (~30 min)',
-  hour: 'een uur (~60 min)',
-  long: 'langer (> 1u)'
+  short: 'Kort (< 15 min)',
+  half: 'Halfuurtje (~30 min)',
+  hour: 'Een uur (~60 min)',
+  long: 'Langer (> 1u)'
 };
 
 const MOVEMENT_FEELINGS = {
-  fine: { emoji: '💜', label: 'fijn' },
-  ok: { emoji: '🌿', label: 'oké' },
-  heavy: { emoji: '🥀', label: 'zwaar' }
+  fine: { emoji: '💜', label: 'Fijn' },
+  ok: { emoji: '🌿', label: 'Oké' },
+  heavy: { emoji: '🥀', label: 'Zwaar' }
 };
 
 function readMovementWeek(weekKey) {
@@ -1842,11 +1839,11 @@ function buildPrintableHTML() {
     <div class="header-date">geëxporteerd op ${exportDate}</div>
     <div class="legend">
       <strong>Legenda:</strong>
-      <span class="legend-mark" style="background:#49A66B">✓</span> gegeten/afgevinkt &nbsp;·&nbsp;
-      <span class="legend-mark" style="background:#888780">⊘</span> niet gebeurd &nbsp;·&nbsp;
-      <span class="legend-mark" style="background:#fff;border:1.5px solid #C8C1F5;color:#C8C1F5;">○</span> gepland, niet aangevinkt &nbsp;·&nbsp;
-      <span style="color:#C8C1F5;font-style:italic;">—</span> leeg
-      ${includeMovement ? '<br><strong>Beweging:</strong> 💜 fijn · 🌿 oké · 🥀 zwaar — duur en notities zoals door gebruiker gerapporteerd' : ''}
+      <span class="legend-mark" style="background:#49A66B">✓</span> Gegeten/Afgevinkt &nbsp;·&nbsp;
+      <span class="legend-mark" style="background:#888780">⊘</span> Niet gebeurd &nbsp;·&nbsp;
+      <span class="legend-mark" style="background:#fff;border:1.5px solid #C8C1F5;color:#C8C1F5;">○</span> Gepland, niet aangevinkt &nbsp;·&nbsp;
+      <span style="color:#C8C1F5;font-style:italic;">—</span> Leeg
+      ${includeMovement ? '<br><strong>Beweging:</strong> 💜 Fijn · 🌿 Oké · 🥀 Zwaar — duur en notities zoals door gebruiker gerapporteerd' : ''}
     </div>
     <div class="grid-wrap">
       <table>
@@ -1862,7 +1859,7 @@ function buildPrintableHTML() {
       </table>
     </div>
     <div class="footer">
-      gegenereerd vanuit het persoonlijke maaltijdplan${includeMovement ? ' & bewegingstuin' : ''}
+      Gegenereerd vanuit het persoonlijke maaltijdplan${includeMovement ? ' & Bewegingstuin' : ''}
     </div>
   </div>
 </body>
@@ -1939,7 +1936,7 @@ function exportEmail() {
     }
     plain += '\n';
   });
-  plain += '\nLegenda: ✓ = gegeten · ⊘ = niet gebeurd · ○ = gepland niet aangevinkt · — = leeg · 📝 = notitie';
+  plain += '\nLegenda: ✓ = Gegeten · ⊘ = Niet Gebeurd · ○ = Gepland niet aangevinkt · — = Leeg · 📝 = Notitie';
   if (includeMovement) plain += '\nBeweging: ervaring/duur zoals gerapporteerd door gebruiker.';
   plain += '\n';
 
@@ -2075,7 +2072,7 @@ function checkCelebrations(dayKey) {
     const day = DAYS.find(d => d.key === dayKey);
     const emojis = ['✨','💜','🌷','💫','🦋','🌸','💖'];
     const emoji = emojis[Math.floor(Math.random() * emojis.length)];
-    showCelebrate(emoji, `${day.long} compleet!`, 'alles afgevinkt voor vandaag. lekker bezig!');
+    showCelebrate(emoji, `${day.long} compleet!`, 'Alles afgevinkt voor vandaag. Lekker bezig!');
   }
 }
 
@@ -2086,23 +2083,23 @@ function showWeekCelebration() {
   let emoji, title, text, intensity;
   if (s.skipped === 0) {
     emoji = '🌸';
-    title = 'volledige week!';
-    text = 'wow! je hebt alles van deze week aangevinkt. trots op jou!';
+    title = 'Volledige week!';
+    text = 'Wow! Je hebt alles van deze week aangevinkt. Trots op jou!';
     intensity = 'full';
   } else if (pctChecked >= 0.85) {
     emoji = '💜';
-    title = 'sterke week!';
-    text = `je hebt ${s.checked} van de ${s.total} maaltijden aangevinkt. dat is heel veel om trots op te zijn.`;
+    title = 'Sterke week!';
+    text = `Je hebt ${s.checked} van de ${s.total} maaltijden aangevinkt. Dat is heel veel om trots op te zijn.`;
     intensity = 'full';
   } else if (pctChecked >= 0.6) {
     emoji = '🌿';
-    title = 'einde van de week';
-    text = `${s.checked} aangevinkt, ${s.skipped} niet gebeurd. eerlijk bijhouden is óók een overwinning.`;
+    title = 'Einde van de week';
+    text = `${s.checked} aangevinkt, ${s.skipped} niet gebeurd. Eerlijk bijhouden is óók een overwinning.`;
     intensity = 'soft';
   } else {
     emoji = '🤍';
-    title = 'einde van de week';
-    text = 'deze week was zwaarder. je hebt het wél bijgehouden — dat is moedig. zachte zondag voor jou.';
+    title = 'Einde van de week';
+    text = 'Deze week was zwaarder. Je hebt het wél bijgehouden — dat is moedig. Zachte zondag voor jou.';
     intensity = 'gentle';
   }
   showCelebrate(emoji, title, text, intensity);

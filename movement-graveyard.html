@@ -903,22 +903,21 @@ const DAYS = [
 ];
 
 const ACTIVITY_TYPES = {
-  dog: { icon: '🐾', plant: '🪦', label: 'Wandeling met de hond' },
+  dog: { icon: '🐾🚶', plant: '🪦', label: 'Wandeling (met Pablo)' },
+  chores: {icon: '🧼', plant: '💔', label: 'Huishouden' },
   volley: { icon: '🏐', plant: '🧟', label: 'Volleybal' },
-  walk: { icon: '🚶', plant: '🪦', label: 'Wandelen' },
-  bike: { icon: '🚴', plant: '⚰️', label: 'Fietsen' },
-  dance: { icon: '💃', plant: '🧟', label: 'Dansen' },
-  swim: { icon: '🏊', plant: '⚰️', label: 'Zwemmen' },
-  run: { icon: '🏃', plant: '🧟', label: 'Lopen' },
+  dance: { icon: '💃', plant: '😵', label: 'Concert' },
+  stand: { icon: '🧍🏼‍♀️', plant: '⚰️', label: 'Rechtstaan' },
+  work:  {icon: '🛒', plant: '👻', label: 'Werk' },
   other: { icon: '🌟', plant: '💀', label: 'Iets anders' }
 };
 
-const SUGGESTION_KEYS = ['dog','volley','walk','bike','yoga','stretch','dance','swim','run','garden'];
+const SUGGESTION_KEYS = ['dog','volley','chores','dance','stand','work'];
 
 const DURATIONS = [
   { key: 'short', label: 'Kort', sub: '< 15 min' },
   { key: 'half', label: 'Halfuurtje', sub: '~30 min' },
-  { key: 'hour', label: 'Eenn uur', sub: '~60 min' },
+  { key: 'hour', label: 'Een uur', sub: '~60 min' },
   { key: 'long', label: 'Langer', sub: '> 1u' }
 ];
 
@@ -1007,14 +1006,14 @@ function saveState() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       flashSaved();
-    } catch(e) { console.warn('save failed', e); }
+    } catch(e) { console.warn('Save failed', e); }
   }, 200);
 }
 
 let savedFlashTimer = null;
 function flashSaved() {
   const el = document.getElementById('saved-indicator');
-  el.textContent = 'opgeslagen ✓';
+  el.textContent = 'Opgeslagen ✓';
   el.style.opacity = '1';
   clearTimeout(savedFlashTimer);
   savedFlashTimer = setTimeout(() => { el.style.opacity = '0'; }, 1200);

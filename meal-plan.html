@@ -262,6 +262,20 @@
     background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E");
   }
   .meal-item.checked .it{color:#2D6E45;font-weight:500;}
+
+  .meal-item.skipped{
+    background:#F1EFE8;
+  }
+  .meal-item.skipped .dot{
+    background:#888780;
+  }
+  .meal-item.skipped .check-right{
+    background-color:#888780;
+    transform:scale(1);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E");
+  }
+  .meal-item.skipped .it{color:#5F5E5A;font-weight:500;}
+
   .add-hint{
     font-size:10.5px;color:var(--pu3);
     text-align:center;
@@ -274,6 +288,26 @@
   .symptom-cell .meal-item.checked .dot{background:var(--pk4);}
   .symptom-cell .meal-item.checked .check-right{background-color:var(--pk4);}
   .symptom-cell .meal-item.checked .it{color:var(--pk4);}
+
+  .meal-cell-note{
+    font-size:10px;color:var(--pu5);
+    font-style:italic;
+    line-height:1.3;
+    padding:2px 4px;
+    border-top:1px dashed var(--pu2);
+    margin-top:auto;
+    word-break:break-word;
+  }
+  .has-note{position:relative;}
+  .has-note::before{
+    content:'';
+    position:absolute;
+    top:5px;right:5px;
+    width:6px;height:6px;
+    border-radius:50%;
+    background:var(--pu4);
+    pointer-events:none;
+  }
 
   .modal-bg{
     position:fixed;inset:0;
@@ -342,6 +376,14 @@
     color:#2D6E45;
     font-weight:500;
   }
+  .modal-item.skipped{
+    background:#F5F5F5;
+    border-color:#C8C5C2;
+  }
+  .modal-item.skipped .modal-item-text{
+    color:#888780;
+    font-weight:500;
+  }
 
   .modal-check{
     width:24px;height:24px;
@@ -362,6 +404,36 @@
     inset:3px;
     background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/contain no-repeat;
   }
+  .modal-item.skipped .modal-check{
+    border-color:#C8C5C2;background:transparent;
+  }
+
+  .modal-skip{
+    width:24px;height:24px;
+    border-radius:50%;
+    border:2px solid var(--pu3);
+    background:transparent;
+    flex-shrink:0;
+    cursor:pointer;
+    position:relative;
+    transition:all 0.14s;
+    touch-action:manipulation;
+  }
+  .modal-skip::after{
+    content:'';position:absolute;
+    inset:5px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23C8C1F5' stroke-width='3' stroke-linecap='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E") center/contain no-repeat;
+    opacity:0.7;
+    transition:opacity 0.14s;
+  }
+  .modal-skip:hover::after{opacity:1;}
+  .modal-item.skipped .modal-skip{
+    background:#888780;border-color:#888780;
+  }
+  .modal-item.skipped .modal-skip::after{
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E") center/contain no-repeat;
+    opacity:1;inset:3px;
+  }
 
   .modal-item-text{
     flex:1;font-size:15px;color:var(--pu8);
@@ -378,6 +450,37 @@
   .modal-del:hover{color:#A32D2D;background:#FCEBEB;}
   .modal-item.checked .modal-del{color:#7FBE91;}
   .modal-item.checked .modal-del:hover{color:#A32D2D;background:#FCEBEB;}
+  .modal-item.skipped .modal-del{color:#B4B2A9;}
+
+  .modal-note-section{
+    border-top:1px solid var(--pu2);
+    padding-top:1rem;
+    margin-bottom:1rem;
+  }
+  .modal-note-label{
+    font-size:11.5px;
+    color:var(--pu5);
+    text-transform:uppercase;
+    letter-spacing:1px;
+    font-weight:500;
+    margin-bottom:6px;
+  }
+  .meal-note-input{
+    width:100%;
+    padding:11px 14px;
+    border-radius:11px;
+    border:1.5px solid var(--pu3);
+    font-family:inherit;
+    font-size:15px;
+    background:#fff;color:var(--text);
+    outline:none;-webkit-appearance:none;
+    transition:border-color 0.14s;
+    resize:vertical;
+    min-height:60px;
+    line-height:1.45;
+  }
+  .meal-note-input:focus{border-color:var(--pu5);}
+  .meal-note-input::placeholder{color:var(--pu3);font-style:italic;}
 
   .modal-add{
     display:flex;gap:8px;
@@ -700,6 +803,31 @@
   }
   .mobile-meal-item.checked .it{color:#2D6E45;font-weight:500;}
 
+  .mobile-meal-item.skipped{
+    background:#F1EFE8;
+  }
+  .mobile-meal-item.skipped .dot{
+    background:#888780;
+  }
+  .mobile-meal-item.skipped .check-right{
+    background-color:#888780;
+    transform:scale(1);
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round'%3E%3Cline x1='5' y1='12' x2='19' y2='12'/%3E%3C/svg%3E");
+  }
+  .mobile-meal-item.skipped .it{color:#5F5E5A;font-weight:500;}
+
+  .mobile-meal-note{
+    font-size:11.5px;color:var(--pu5);
+    font-style:italic;
+    padding:6px 12px 8px;
+    background:var(--pu1);
+    border-radius:0 0 6px 6px;
+    margin:4px -6px -4px;
+    line-height:1.4;
+    word-break:break-word;
+    border-left:3px solid var(--pu3);
+  }
+
   .mobile-meal.empty .mobile-meal-items{
     color:var(--pu3);font-style:italic;font-size:12px;
   }
@@ -763,6 +891,10 @@
       <button class="modal-add-btn" id="modal-add-btn">+</button>
     </div>
     <div class="modal-suggestions" id="modal-suggestions"></div>
+    <div class="modal-note-section">
+      <div class="modal-note-label">notitie <span style="text-transform:none;letter-spacing:0;font-weight:400;color:var(--pu4);">(optioneel)</span></div>
+      <textarea class="meal-note-input" id="meal-note-input" placeholder="iets erbij vertellen? bijv. 'voelde goed' of 'samen met mama'" maxlength="240" rows="2"></textarea>
+    </div>
     <div class="modal-copy" id="modal-copy"></div>
     <button class="modal-close" id="modal-close">klaar</button>
   </div>
@@ -806,6 +938,14 @@
     <div class="modal-handle"></div>
     <div class="modal-title">exporteren voor diëtist</div>
     <div class="modal-copy-hint" style="text-align:center;margin-bottom:1rem;">een nette samenvatting van deze week om te delen</div>
+
+    <div id="include-movement-section" style="display:none;background:var(--pu1);border-radius:11px;padding:12px 14px;margin-bottom:1rem;">
+      <label style="display:flex;align-items:center;gap:10px;cursor:pointer;font-size:13px;color:var(--pu7);">
+        <input type="checkbox" id="include-movement" style="width:18px;height:18px;accent-color:var(--pu5);cursor:pointer;">
+        <span>ook bewegingsdata van deze week meenemen</span>
+      </label>
+    </div>
+
     <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1rem;">
       <button class="copy-btn" id="export-pdf" style="background:var(--pu5);">opslaan als PDF</button>
       <button class="copy-btn" id="export-print" style="background:var(--pu4);">printen</button>
@@ -850,6 +990,7 @@ const SUGGESTIONS = {
 
 let state = {
   weeks: {},
+  weekNotes: {},
   currentWeekKey: getWeekKey(new Date())
 };
 
@@ -920,6 +1061,7 @@ function loadState() {
     const parsed = JSON.parse(raw);
     if (parsed && typeof parsed === 'object') {
       state.weeks = parsed.weeks || {};
+      state.weekNotes = parsed.weekNotes || {};
       state.currentWeekKey = parsed.currentWeekKey || getWeekKey(new Date());
     }
   } catch(e) { console.warn('load failed', e); }
@@ -978,6 +1120,19 @@ function playUncheck() {
   o.start(); o.stop(ctx.currentTime + 0.16);
 }
 
+function playSkip() {
+  const ctx = getAudio(); if (!ctx) return;
+  [[330,0],[262,0.12]].forEach(([f,t]) => {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'sine'; o.frequency.value = f;
+    const st = ctx.currentTime + t;
+    g.gain.setValueAtTime(0.07, st);
+    g.gain.exponentialRampToValueAtTime(0.001, st + 0.32);
+    o.start(st); o.stop(st + 0.36);
+  });
+}
+
 function escapeHTML(s) {
   return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 }
@@ -1019,17 +1174,25 @@ function renderGrid() {
     html += `<div class="day-label ${today?'today':''}"><span class="dn">${day.short}</span><span class="dd">${date.getDate()}/${date.getMonth()+1}</span></div>`;
     MEALS.forEach(meal => {
       const items = state.weeks[wk][day.key][meal.key];
+      const note = getCellNote(day.key, meal.key);
       const isSymp = meal.key === 'symptomen';
-      const cls = `meal-cell ${items.length===0?'empty-cell':'has-items'} ${isSymp?'symptom-cell':''}`;
+      const cls = `meal-cell ${items.length===0?'empty-cell':'has-items'} ${isSymp?'symptom-cell':''} ${note?'has-note':''}`;
       html += `<div class="${cls}" data-day="${day.key}" data-meal="${meal.key}">`;
-      if (items.length === 0) {
+      if (items.length === 0 && !note) {
         html += `<div class="add-hint">+</div>`;
       } else {
-        items.slice(0, 4).forEach((it, idx) => {
-          html += `<div class="meal-item ${it.checked?'checked':''}"><span class="dot"></span><span class="it">${escapeHTML(it.text)}</span><span class="check-right"></span></div>`;
+        items.slice(0, 4).forEach((it) => {
+          let stateCls = '';
+          if (it.checked) stateCls = 'checked';
+          else if (it.skipped) stateCls = 'skipped';
+          html += `<div class="meal-item ${stateCls}"><span class="dot"></span><span class="it">${escapeHTML(it.text)}</span><span class="check-right"></span></div>`;
         });
         if (items.length > 4) {
           html += `<div class="meal-item"><span class="it" style="color:var(--pu4);font-size:10.5px">+ ${items.length - 4} meer</span></div>`;
+        }
+        if (note) {
+          const truncated = note.length > 40 ? note.slice(0, 38) + '…' : note;
+          html += `<div class="meal-cell-note">📝 ${escapeHTML(truncated)}</div>`;
         }
       }
       html += '</div>';
@@ -1053,17 +1216,24 @@ function renderMobile() {
     html += `<div class="mobile-meals">`;
     MEALS.forEach(meal => {
       const items = state.weeks[wk][day.key][meal.key];
+      const note = getCellNote(day.key, meal.key);
       const isSymp = meal.key === 'symptomen';
-      const cls = `mobile-meal ${items.length===0?'empty':''} ${isSymp?'symptoms':''}`;
+      const cls = `mobile-meal ${(items.length===0 && !note)?'empty':''} ${isSymp?'symptoms':''}`;
       html += `<div class="${cls}" data-day="${day.key}" data-meal="${meal.key}">`;
       html += `<div class="mobile-meal-label">${escapeHTML(meal.short)}</div>`;
       html += `<div class="mobile-meal-items">`;
-      if (items.length === 0) {
+      if (items.length === 0 && !note) {
         html += `<div style="color:var(--pu3);font-style:italic;">tik om toe te voegen</div>`;
       } else {
         items.forEach(it => {
-          html += `<div class="mobile-meal-item ${it.checked?'checked':''}"><span class="dot"></span><span class="it">${escapeHTML(it.text)}</span><span class="check-right"></span></div>`;
+          let stateCls = '';
+          if (it.checked) stateCls = 'checked';
+          else if (it.skipped) stateCls = 'skipped';
+          html += `<div class="mobile-meal-item ${stateCls}"><span class="dot"></span><span class="it">${escapeHTML(it.text)}</span><span class="check-right"></span></div>`;
         });
+        if (note) {
+          html += `<div class="mobile-meal-note">📝 ${escapeHTML(note)}</div>`;
+        }
       }
       html += `</div></div>`;
     });
@@ -1075,6 +1245,24 @@ function renderMobile() {
 
 let openCell = null;
 let copyTargetDays = new Set();
+
+function getCellNote(dayKey, mealKey) {
+  const wk = state.currentWeekKey;
+  if (!state.weekNotes[wk]) return '';
+  if (!state.weekNotes[wk][dayKey]) return '';
+  return state.weekNotes[wk][dayKey][mealKey] || '';
+}
+
+function setCellNote(dayKey, mealKey, note) {
+  const wk = state.currentWeekKey;
+  if (!state.weekNotes[wk]) state.weekNotes[wk] = {};
+  if (!state.weekNotes[wk][dayKey]) state.weekNotes[wk][dayKey] = {};
+  if (note && note.trim()) {
+    state.weekNotes[wk][dayKey][mealKey] = note.trim();
+  } else {
+    delete state.weekNotes[wk][dayKey][mealKey];
+  }
+}
 
 function openModal(dayKey, mealKey) {
   openCell = { dayKey, mealKey };
@@ -1089,6 +1277,7 @@ function openModal(dayKey, mealKey) {
     `${day.long.toLowerCase()} · ${dt.getDate()}/${dt.getMonth()+1}`;
   document.getElementById('modal-title').textContent = meal.label;
   document.getElementById('modal-input').placeholder = `${meal.short} toevoegen...`;
+  document.getElementById('meal-note-input').value = getCellNote(dayKey, mealKey);
   renderModalItems();
   renderSuggestions();
   renderCopySection();
@@ -1104,13 +1293,17 @@ function renderModalItems() {
     cont.innerHTML = '<div class="modal-empty">nog niets · voeg iets toe hieronder</div>';
     return;
   }
-  cont.innerHTML = items.map((it, i) =>
-    `<div class="modal-item ${it.checked?'checked':''}">
-      <button class="modal-check" data-mcheck="${i}" aria-label="${it.checked?'uncheck':'check'}"></button>
+  cont.innerHTML = items.map((it, i) => {
+    let stateCls = '';
+    if (it.checked) stateCls = 'checked';
+    else if (it.skipped) stateCls = 'skipped';
+    return `<div class="modal-item ${stateCls}">
+      <button class="modal-check" data-mcheck="${i}" aria-label="${it.checked?'uncheck':'check'}" title="afgevinkt"></button>
+      <button class="modal-skip" data-mskip="${i}" aria-label="${it.skipped?'unskip':'skip'}" title="niet gebeurd"></button>
       <span class="modal-item-text">${escapeHTML(it.text)}</span>
       <button class="modal-del" data-mdel="${i}" aria-label="remove">&#x2715;</button>
-    </div>`
-  ).join('');
+    </div>`;
+  }).join('');
 }
 
 function renderSuggestions() {
@@ -1268,7 +1461,61 @@ function closeCopyDayModal() {
   copyDayTargets = new Set();
 }
 
+const MOVEMENT_STORAGE_KEY = 'movement-garden-v1';
+
+const MOVEMENT_ACTIVITY_TYPES = {
+  dog: { icon: '🐾', label: 'wandeling met de hond' },
+  volley: { icon: '🏐', label: 'volleybal' },
+  walk: { icon: '🚶', label: 'wandelen' },
+  bike: { icon: '🚴', label: 'fietsen' },
+  yoga: { icon: '🧘', label: 'yoga' },
+  stretch: { icon: '✨', label: 'rekken / stretchen' },
+  dance: { icon: '💃', label: 'dansen' },
+  swim: { icon: '🏊', label: 'zwemmen' },
+  run: { icon: '🏃', label: 'lopen' },
+  garden: { icon: '🌷', label: 'tuinieren' },
+  other: { icon: '🌟', label: 'iets anders' }
+};
+
+const MOVEMENT_DURATIONS = {
+  short: 'kort (< 15 min)',
+  half: 'halfuurtje (~30 min)',
+  hour: 'een uur (~60 min)',
+  long: 'langer (> 1u)'
+};
+
+const MOVEMENT_FEELINGS = {
+  fine: { emoji: '💜', label: 'fijn' },
+  ok: { emoji: '🌿', label: 'oké' },
+  heavy: { emoji: '🥀', label: 'zwaar' }
+};
+
+function readMovementWeek(weekKey) {
+  try {
+    const raw = localStorage.getItem(MOVEMENT_STORAGE_KEY);
+    if (!raw) return null;
+    const parsed = JSON.parse(raw);
+    if (!parsed || !parsed.weeks || !parsed.weeks[weekKey]) return null;
+    return parsed.weeks[weekKey];
+  } catch(e) { return null; }
+}
+
+function hasMovementForCurrentWeek() {
+  const wk = readMovementWeek(state.currentWeekKey);
+  if (!wk) return false;
+  return Object.values(wk).some(arr => Array.isArray(arr) && arr.length > 0);
+}
+
 function openExportModal() {
+  const sect = document.getElementById('include-movement-section');
+  const cb = document.getElementById('include-movement');
+  if (hasMovementForCurrentWeek()) {
+    sect.style.display = 'block';
+    cb.checked = false;
+  } else {
+    sect.style.display = 'none';
+    cb.checked = false;
+  }
   document.getElementById('export-modal').classList.add('show');
 }
 
@@ -1276,40 +1523,80 @@ function closeExportModal() {
   document.getElementById('export-modal').classList.remove('show');
 }
 
+function shouldIncludeMovement() {
+  return document.getElementById('include-movement').checked && hasMovementForCurrentWeek();
+}
+
 function buildPrintableHTML() {
   const wk = state.currentWeekKey;
   ensureWeek(wk);
   const dates = weekDates(wk);
   const rangeLabel = formatWeekRange(wk);
-
-  let body = '';
-  DAYS.forEach((day, i) => {
-    const dt = dates[i];
-    const dayData = state.weeks[wk][day.key];
-    let dayHasContent = false;
-    let dayHTML = `<div class="day-block">
-      <h2>${day.long} <span class="date-sub">${dt.getDate()}/${dt.getMonth()+1}</span></h2>
-      <table>
-        <tbody>`;
-    MEALS.forEach(meal => {
-      const items = dayData[meal.key] || [];
-      if (items.length === 0) {
-        dayHTML += `<tr><td class="meal-name">${escapeHTML(meal.label)}</td><td class="meal-content empty">—</td></tr>`;
-      } else {
-        dayHasContent = true;
-        const itemsHTML = items.map(it => {
-          const mark = it.checked ? '<span class="check">✓</span>' : '<span class="uncheck">○</span>';
-          return `<div class="line">${mark} ${escapeHTML(it.text)}</div>`;
-        }).join('');
-        dayHTML += `<tr><td class="meal-name">${escapeHTML(meal.label)}</td><td class="meal-content">${itemsHTML}</td></tr>`;
-      }
-    });
-    dayHTML += `</tbody></table></div>`;
-    body += dayHTML;
-  });
+  const includeMovement = shouldIncludeMovement();
+  const movementWeek = includeMovement ? readMovementWeek(wk) : null;
 
   const today = new Date();
   const exportDate = `${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`;
+
+  const headerCells = MEALS.map(m =>
+    `<th class="col-h">${escapeHTML(m.label)}</th>`
+  ).join('');
+
+  let bodyRows = '';
+  DAYS.forEach((day, i) => {
+    const dt = dates[i];
+    const isTodayRow = isToday(dt);
+    const dayData = state.weeks[wk][day.key];
+
+    let row = `<tr class="${isTodayRow?'today-row':''}">
+      <td class="day-h"><div class="dn">${day.short}</div><div class="dd">${dt.getDate()}/${dt.getMonth()+1}</div></td>`;
+
+    MEALS.forEach(meal => {
+      const items = dayData[meal.key] || [];
+      const note = (state.weekNotes && state.weekNotes[wk] && state.weekNotes[wk][day.key] && state.weekNotes[wk][day.key][meal.key]) || '';
+      const isSymp = meal.key === 'symptomen';
+      let cellHTML = '';
+      if (items.length === 0 && !note) {
+        cellHTML = `<div class="empty-mark">—</div>`;
+      } else {
+        items.forEach(it => {
+          let mark, cls;
+          if (it.checked) { mark = '<span class="check">✓</span>'; cls = 'item-checked'; }
+          else if (it.skipped) { mark = '<span class="skip">⊘</span>'; cls = 'item-skipped'; }
+          else { mark = '<span class="uncheck">○</span>'; cls = 'item-plain'; }
+          cellHTML += `<div class="line ${cls}">${mark}<span class="t">${escapeHTML(it.text)}</span></div>`;
+        });
+        if (note) {
+          cellHTML += `<div class="cell-note">📝 ${escapeHTML(note)}</div>`;
+        }
+      }
+      cellHTML += '';
+      row += `<td class="meal-cell ${isSymp?'symp':''}">${cellHTML}</td>`;
+    });
+    row += '</tr>';
+    bodyRows += row;
+
+    if (movementWeek) {
+      const movs = movementWeek[day.key] || [];
+      let movHTML = '';
+      if (movs.length === 0) {
+        movHTML = `<div class="empty-mark">—</div>`;
+      } else {
+        movs.forEach(m => {
+          const t = MOVEMENT_ACTIVITY_TYPES[m.typeKey] || MOVEMENT_ACTIVITY_TYPES.other;
+          const dur = MOVEMENT_DURATIONS[m.durationKey] || '';
+          const feel = MOVEMENT_FEELINGS[m.feelingKey];
+          const feelStr = feel ? ` · voelde ${feel.label}` : '';
+          movHTML += `<div class="mov-line"><span class="mov-icon">${t.icon}</span> ${escapeHTML(m.what)}${dur ? ` <span class="mov-dur">(${dur})</span>` : ''}<span class="mov-feel">${feelStr}</span></div>`;
+          if (m.note) movHTML += `<div class="mov-note">${escapeHTML(m.note)}</div>`;
+        });
+      }
+      bodyRows += `<tr class="mov-row ${isTodayRow?'today-row-mov':''}">
+        <td class="day-h-mov"><div class="dn">${day.short}</div><div class="mov-tag">beweging</div></td>
+        <td class="mov-cell" colspan="${MEALS.length}">${movHTML}</td>
+      </tr>`;
+    }
+  });
 
   return `<!DOCTYPE html>
 <html lang="nl">
@@ -1321,109 +1608,262 @@ function buildPrintableHTML() {
   body{
     font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
     color:#26215C;
-    padding:32px 28px;
-    line-height:1.5;
-    max-width:800px;margin:0 auto;
+    padding:24px 18px;
+    line-height:1.4;
+    background:#F4F0FE;
+    min-width:0;
+  }
+  .page{
+    max-width:1100px;
+    margin:0 auto;
     background:#fff;
+    border-radius:18px;
+    padding:28px 22px;
+    box-shadow:0 4px 24px rgba(113,101,214,0.08);
   }
   h1{
     font-family:'Cormorant Garamond','Hoefler Text',Georgia,serif;
-    font-size:28px;font-weight:700;
+    font-size:30px;font-weight:700;
     color:#3A3285;
-    margin-bottom:6px;
-  }
-  .header-meta{
-    color:#7165D6;font-size:13px;
+    text-align:center;
     margin-bottom:4px;
+  }
+  .header-sub{
+    font-style:italic;
+    color:#7165D6;
+    text-align:center;
+    font-size:14px;
+    margin-bottom:6px;
   }
   .header-date{
     color:#9B91E8;font-size:11px;
-    margin-bottom:24px;
+    text-align:center;
+    margin-bottom:18px;
   }
   .legend{
-    background:#F5F3FE;
+    background:#F2EFFE;
     padding:10px 14px;
-    border-radius:8px;
-    font-size:12px;
+    border-radius:11px;
+    font-size:11.5px;
     color:#534AB7;
-    margin-bottom:24px;
-    border-left:3px solid #7165D6;
+    margin-bottom:18px;
+    border:1.5px solid #E2DEFB;
+    line-height:1.6;
   }
-  .day-block{
-    margin-bottom:22px;
-    page-break-inside:avoid;
+  .legend strong{color:#3A3285;}
+  .legend-mark{
+    display:inline-block;
+    width:14px;height:14px;
+    border-radius:50%;
+    text-align:center;
+    line-height:13px;
+    font-size:10px;
+    color:#fff;
+    font-weight:700;
+    vertical-align:middle;
+    margin:0 3px;
   }
-  h2{
-    font-family:'Cormorant Garamond','Hoefler Text',Georgia,serif;
-    font-size:18px;font-weight:700;
-    color:#3A3285;
-    border-bottom:1.5px solid #C8C1F5;
-    padding-bottom:6px;
-    margin-bottom:8px;
-  }
-  .date-sub{
-    color:#9B91E8;font-size:13px;
-    font-weight:400;
-    margin-left:8px;
+
+  .grid-wrap{
+    background:#E2DEFB;
+    border-radius:14px;
+    padding:5px;
   }
   table{
     width:100%;
-    border-collapse:collapse;
+    border-collapse:separate;
+    border-spacing:5px;
+    table-layout:fixed;
   }
-  td{
-    padding:8px 10px;
+  th, td{
     vertical-align:top;
-    border-bottom:1px solid #F2EFFE;
-    font-size:13px;
+    padding:8px 8px;
+    font-size:11.5px;
+    border-radius:8px;
+    background:#fff;
+    line-height:1.35;
   }
-  td.meal-name{
-    width:140px;
-    font-weight:500;
-    color:#534AB7;
-    background:#FBFAFE;
-    border-right:1px solid #F2EFFE;
+  th.col-h{
+    background:#C8C1F5;
+    color:#3A3285;
+    font-family:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    font-size:12.5px;
+    font-weight:600;
+    text-align:center;
+    padding:9px 6px;
   }
-  td.meal-content.empty{
-    color:#C8C1F5;
-    font-style:italic;
+  td.day-h{
+    background:#7165D6;
+    color:#fff;
+    text-align:center;
+    width:70px;
+    font-family:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    font-weight:600;
+    padding:14px 4px;
   }
+  td.day-h .dn{font-size:13px;}
+  td.day-h .dd{font-size:10px;font-weight:400;opacity:0.85;margin-top:2px;}
+
+  tr.today-row td.day-h{background:#D4537E;}
+
+  td.meal-cell{
+    background:#fff;
+    min-height:60px;
+  }
+  td.meal-cell.symp{
+    background:#FDFAFC;
+  }
+
   .line{
-    margin:2px 0;
+    margin:1px 0;
     color:#26215C;
+    display:flex;
+    align-items:flex-start;
+    gap:5px;
+    padding:2px 4px;
+    border-radius:4px;
+    word-break:break-word;
   }
+  .line .t{flex:1;}
+  .item-checked{background:#E8F5EE;color:#2D6E45;font-weight:500;}
+  .item-skipped{background:#F1EFE8;color:#5F5E5A;font-weight:500;}
+  .item-plain{color:#26215C;}
+
   .check{
-    color:#49A66B;
+    color:#fff;
+    background:#49A66B;
+    width:14px;height:14px;
+    border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:9px;
+    flex-shrink:0;
     font-weight:700;
-    margin-right:6px;
+    margin-top:1px;
+  }
+  .skip{
+    color:#fff;
+    background:#888780;
+    width:14px;height:14px;
+    border-radius:50%;
+    display:inline-flex;align-items:center;justify-content:center;
+    font-size:11px;
+    flex-shrink:0;
+    line-height:1;
+    margin-top:1px;
   }
   .uncheck{
     color:#C8C1F5;
-    margin-right:6px;
+    width:14px;height:14px;
+    border:1.5px solid #C8C1F5;
+    border-radius:50%;
+    display:inline-flex;
+    flex-shrink:0;
+    margin-top:1px;
+    box-sizing:border-box;
   }
+
+  .empty-mark{
+    color:#C8C1F5;font-style:italic;
+    text-align:center;
+    font-size:13px;
+    padding:8px 0;
+  }
+  .cell-note{
+    margin-top:6px;
+    padding:5px 8px;
+    background:#F5F3FE;
+    border-left:2.5px solid #C8C1F5;
+    border-radius:0 6px 6px 0;
+    font-size:10.5px;
+    color:#3A3285;
+    font-style:italic;
+    line-height:1.4;
+  }
+
+  tr.mov-row td{padding-top:6px;padding-bottom:6px;}
+  td.day-h-mov{
+    background:#9B91E8;
+    color:#fff;
+    text-align:center;
+    width:70px;
+    font-family:'Cormorant Garamond','Hoefler Text',Georgia,serif;
+    font-weight:600;
+    padding:8px 4px;
+  }
+  td.day-h-mov .dn{font-size:12px;}
+  td.day-h-mov .mov-tag{font-size:9px;font-weight:400;opacity:0.9;letter-spacing:0.5px;text-transform:uppercase;margin-top:2px;}
+  tr.today-row-mov td.day-h-mov{background:#ED93B1;}
+  td.mov-cell{
+    background:#FBFAFE;
+    border:1px solid #F2EFFE;
+  }
+  .mov-line{
+    margin:2px 0;
+    color:#3A3285;
+    font-size:11.5px;
+  }
+  .mov-icon{margin-right:5px;}
+  .mov-dur{color:#9B91E8;font-size:10.5px;}
+  .mov-feel{color:#7165D6;}
+  .mov-note{
+    margin:3px 0 4px 22px;
+    padding:4px 8px;
+    background:#F5F3FE;
+    border-left:2.5px solid #C8C1F5;
+    border-radius:0 6px 6px 0;
+    font-size:10.5px;
+    color:#3A3285;
+    font-style:italic;
+  }
+
   .footer{
-    margin-top:32px;
-    padding-top:16px;
+    margin-top:24px;
+    padding-top:14px;
     border-top:1px solid #E2DEFB;
-    font-size:11px;
+    font-size:10.5px;
     color:#9B91E8;
     text-align:center;
   }
   @media print{
-    body{padding:20px;}
-    .day-block{page-break-inside:avoid;}
+    body{background:#fff;padding:10px;}
+    .page{box-shadow:none;padding:14px;}
+    @page{size:A4 landscape;margin:10mm;}
+    table{font-size:10px;}
+    th, td{font-size:10px;padding:5px 6px;}
+    .line{font-size:10px;}
+    h1{font-size:22px;}
   }
 </style>
 </head>
 <body>
-  <h1>Maaltijdoverzicht</h1>
-  <div class="header-meta">Week van ${rangeLabel}</div>
-  <div class="header-date">Geëxporteerd op ${exportDate}</div>
-  <div class="legend">
-    <strong>Legenda:</strong> ✓ = afgevinkt (gegeten) · ○ = gepland maar niet afgevinkt · — = niet ingevuld
-  </div>
-  ${body}
-  <div class="footer">
-    Gegenereerd vanuit het persoonlijke maaltijdplan
+  <div class="page">
+    <h1>${includeMovement ? 'Maaltijd- en bewegingsoverzicht' : 'Maaltijdoverzicht'}</h1>
+    <div class="header-sub">week van ${rangeLabel}</div>
+    <div class="header-date">geëxporteerd op ${exportDate}</div>
+    <div class="legend">
+      <strong>Legenda:</strong>
+      <span class="legend-mark" style="background:#49A66B">✓</span> gegeten/afgevinkt &nbsp;·&nbsp;
+      <span class="legend-mark" style="background:#888780">⊘</span> niet gebeurd &nbsp;·&nbsp;
+      <span class="legend-mark" style="background:#fff;border:1.5px solid #C8C1F5;color:#C8C1F5;">○</span> gepland, niet aangevinkt &nbsp;·&nbsp;
+      <span style="color:#C8C1F5;font-style:italic;">—</span> leeg
+      ${includeMovement ? '<br><strong>Beweging:</strong> 💜 fijn · 🌿 oké · 🥀 zwaar — duur en notities zoals door gebruiker gerapporteerd' : ''}
+    </div>
+    <div class="grid-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th class="col-h" style="background:#7165D6;color:#fff;">Dag</th>
+            ${headerCells}
+          </tr>
+        </thead>
+        <tbody>
+          ${bodyRows}
+        </tbody>
+      </table>
+    </div>
+    <div class="footer">
+      gegenereerd vanuit het persoonlijke maaltijdplan${includeMovement ? ' & bewegingstuin' : ''}
+    </div>
   </div>
 </body>
 </html>`;
@@ -1454,6 +1894,8 @@ function exportEmail() {
   const wk = state.currentWeekKey;
   const rangeLabel = formatWeekRange(wk);
   const dates = weekDates(wk);
+  const includeMovement = shouldIncludeMovement();
+  const movementWeek = includeMovement ? readMovementWeek(wk) : null;
 
   let plain = `MAALTIJDOVERZICHT\nWeek van ${rangeLabel}\n\n`;
   DAYS.forEach((day, i) => {
@@ -1463,20 +1905,45 @@ function exportEmail() {
     plain += '─'.repeat(30) + '\n';
     MEALS.forEach(meal => {
       const items = dayData[meal.key] || [];
+      const note = (state.weekNotes && state.weekNotes[wk] && state.weekNotes[wk][day.key] && state.weekNotes[wk][day.key][meal.key]) || '';
       plain += `${meal.label}:\n`;
-      if (items.length === 0) {
+      if (items.length === 0 && !note) {
         plain += '  —\n';
       } else {
         items.forEach(it => {
-          plain += `  ${it.checked ? '✓' : '○'} ${it.text}\n`;
+          let mark = '○';
+          if (it.checked) mark = '✓';
+          else if (it.skipped) mark = '⊘';
+          plain += `  ${mark} ${it.text}\n`;
         });
+        if (note) {
+          plain += `  📝 "${note}"\n`;
+        }
       }
     });
+    if (movementWeek) {
+      const movs = movementWeek[day.key] || [];
+      plain += `Beweging:\n`;
+      if (movs.length === 0) {
+        plain += '  —\n';
+      } else {
+        movs.forEach(m => {
+          const t = MOVEMENT_ACTIVITY_TYPES[m.typeKey] || MOVEMENT_ACTIVITY_TYPES.other;
+          const dur = MOVEMENT_DURATIONS[m.durationKey] || '';
+          const feel = MOVEMENT_FEELINGS[m.feelingKey];
+          const feelStr = feel ? ` · voelde ${feel.label}` : '';
+          plain += `  ${t.icon} ${m.what}${dur ? ` (${dur})` : ''}${feelStr}\n`;
+          if (m.note) plain += `      "${m.note}"\n`;
+        });
+      }
+    }
     plain += '\n';
   });
-  plain += '\nLegenda: ✓ = afgevinkt · ○ = gepland niet afgevinkt · — = niet ingevuld\n';
+  plain += '\nLegenda: ✓ = gegeten · ⊘ = niet gebeurd · ○ = gepland niet aangevinkt · — = leeg · 📝 = notitie';
+  if (includeMovement) plain += '\nBeweging: ervaring/duur zoals gerapporteerd door gebruiker.';
+  plain += '\n';
 
-  const subject = encodeURIComponent(`Maaltijdoverzicht week van ${rangeLabel}`);
+  const subject = encodeURIComponent(`Maaltijdoverzicht week van ${rangeLabel}${includeMovement ? ' (incl. beweging)' : ''}`);
   const body = encodeURIComponent(plain);
   window.location.href = `mailto:?subject=${subject}&body=${body}`;
   closeExportModal();
@@ -1506,12 +1973,37 @@ function addItem(dayKey, mealKey, text) {
 function toggleItem(dayKey, mealKey, idx) {
   const items = state.weeks[state.currentWeekKey][dayKey][mealKey];
   if (!items[idx]) return;
-  items[idx].checked = !items[idx].checked;
-  if (items[idx].checked) playCheck(); else playUncheck();
+  if (items[idx].checked) {
+    items[idx].checked = false;
+    playUncheck();
+  } else {
+    items[idx].checked = true;
+    items[idx].skipped = false;
+    playCheck();
+  }
   renderModalItems();
   render();
   saveState();
   if (items[idx].checked) {
+    setTimeout(() => checkCelebrations(dayKey), 250);
+  }
+}
+
+function toggleSkipItem(dayKey, mealKey, idx) {
+  const items = state.weeks[state.currentWeekKey][dayKey][mealKey];
+  if (!items[idx]) return;
+  if (items[idx].skipped) {
+    items[idx].skipped = false;
+    playUncheck();
+  } else {
+    items[idx].skipped = true;
+    items[idx].checked = false;
+    playSkip();
+  }
+  renderModalItems();
+  render();
+  saveState();
+  if (items[idx].skipped) {
     setTimeout(() => checkCelebrations(dayKey), 250);
   }
 }
@@ -1526,31 +2018,43 @@ function deleteItem(dayKey, mealKey, idx) {
   saveState();
 }
 
-function isDayComplete(dayKey) {
+function getDayStats(dayKey) {
   const dayData = state.weeks[state.currentWeekKey][dayKey];
-  let total = 0, done = 0;
+  let total = 0, checked = 0, skipped = 0;
   MEALS.forEach(meal => {
     const items = dayData[meal.key] || [];
     items.forEach(it => {
       total++;
-      if (it.checked) done++;
+      if (it.checked) checked++;
+      else if (it.skipped) skipped++;
     });
   });
-  return total > 0 && done === total;
+  return { total, checked, skipped, addressed: checked + skipped };
 }
 
-function isWeekComplete() {
-  let total = 0, done = 0;
+function getWeekStats() {
+  let total = 0, checked = 0, skipped = 0;
   DAYS.forEach(day => {
     MEALS.forEach(meal => {
       const items = state.weeks[state.currentWeekKey][day.key][meal.key] || [];
       items.forEach(it => {
         total++;
-        if (it.checked) done++;
+        if (it.checked) checked++;
+        else if (it.skipped) skipped++;
       });
     });
   });
-  return total > 0 && done === total;
+  return { total, checked, skipped, addressed: checked + skipped };
+}
+
+function isDayFullyChecked(dayKey) {
+  const s = getDayStats(dayKey);
+  return s.total > 0 && s.checked === s.total;
+}
+
+function isWeekFullyAddressed() {
+  const s = getWeekStats();
+  return s.total > 0 && s.addressed === s.total;
 }
 
 const celebrationsShown = {};
@@ -1560,13 +2064,13 @@ function checkCelebrations(dayKey) {
   const dayCompleteKey = `${wkKey}|${dayKey}|day`;
   const weekCompleteKey = `${wkKey}|week`;
 
-  if (isWeekComplete() && !celebrationsShown[weekCompleteKey]) {
+  if (isWeekFullyAddressed() && !celebrationsShown[weekCompleteKey]) {
     celebrationsShown[weekCompleteKey] = true;
-    showCelebrate('🌸', 'volledige week!', 'wow! je hebt alles van deze week afgevinkt. trots op jou!');
+    showWeekCelebration();
     return;
   }
 
-  if (isDayComplete(dayKey) && !celebrationsShown[dayCompleteKey]) {
+  if (isDayFullyChecked(dayKey) && !celebrationsShown[dayCompleteKey]) {
     celebrationsShown[dayCompleteKey] = true;
     const day = DAYS.find(d => d.key === dayKey);
     const emojis = ['✨','💜','🌷','💫','🦋','🌸','💖'];
@@ -1575,46 +2079,97 @@ function checkCelebrations(dayKey) {
   }
 }
 
-function showCelebrate(emoji, title, text) {
+function showWeekCelebration() {
+  const s = getWeekStats();
+  const pctChecked = s.total > 0 ? s.checked / s.total : 0;
+
+  let emoji, title, text, intensity;
+  if (s.skipped === 0) {
+    emoji = '🌸';
+    title = 'volledige week!';
+    text = 'wow! je hebt alles van deze week aangevinkt. trots op jou!';
+    intensity = 'full';
+  } else if (pctChecked >= 0.85) {
+    emoji = '💜';
+    title = 'sterke week!';
+    text = `je hebt ${s.checked} van de ${s.total} maaltijden aangevinkt. dat is heel veel om trots op te zijn.`;
+    intensity = 'full';
+  } else if (pctChecked >= 0.6) {
+    emoji = '🌿';
+    title = 'einde van de week';
+    text = `${s.checked} aangevinkt, ${s.skipped} niet gebeurd. eerlijk bijhouden is óók een overwinning.`;
+    intensity = 'soft';
+  } else {
+    emoji = '🤍';
+    title = 'einde van de week';
+    text = 'deze week was zwaarder. je hebt het wél bijgehouden — dat is moedig. zachte zondag voor jou.';
+    intensity = 'gentle';
+  }
+  showCelebrate(emoji, title, text, intensity);
+}
+
+function showCelebrate(emoji, title, text, intensity) {
   closeModal();
   document.getElementById('celebrate-emoji').textContent = emoji;
   document.getElementById('celebrate-title').textContent = title;
   document.getElementById('celebrate-text').textContent = text;
-  spawnConfetti();
+  spawnConfetti(intensity);
   document.getElementById('celebrate-modal').classList.add('show');
-  playCelebrate();
+  playCelebrate(intensity);
 }
 
 function closeCelebrate() {
   document.getElementById('celebrate-modal').classList.remove('show');
 }
 
-function spawnConfetti() {
+function spawnConfetti(intensity) {
+  intensity = intensity || 'full';
   const cont = document.getElementById('confetti');
   cont.innerHTML = '';
-  const colors = ['#7165D6','#9B91E8','#C8C1F5','#ED93B1','#D4537E','#F7D4E5'];
-  for (let i = 0; i < 35; i++) {
+  let count, colors;
+  if (intensity === 'gentle') {
+    count = 12;
+    colors = ['#C8C1F5','#E2DEFB','#F7D4E5','#F2EFFE'];
+  } else if (intensity === 'soft') {
+    count = 22;
+    colors = ['#9B91E8','#C8C1F5','#ED93B1','#F7D4E5'];
+  } else {
+    count = 35;
+    colors = ['#7165D6','#9B91E8','#C8C1F5','#ED93B1','#D4537E','#F7D4E5'];
+  }
+  for (let i = 0; i < count; i++) {
     const s = document.createElement('span');
     s.style.left = Math.random()*100 + '%';
     s.style.background = colors[Math.floor(Math.random()*colors.length)];
-    s.style.animationDuration = (1.6 + Math.random()*1.2) + 's';
+    s.style.animationDuration = (1.8 + Math.random()*1.4) + 's';
     s.style.animationDelay = (Math.random()*0.4) + 's';
     s.style.transform = `rotate(${Math.random()*360}deg)`;
     cont.appendChild(s);
   }
 }
 
-function playCelebrate() {
+function playCelebrate(intensity) {
+  intensity = intensity || 'full';
   const ctx = getAudio(); if (!ctx) return;
-  const notes = [523, 659, 784, 1047, 1319];
+  let notes, gain;
+  if (intensity === 'gentle') {
+    notes = [392, 523];
+    gain = 0.09;
+  } else if (intensity === 'soft') {
+    notes = [523, 659, 784];
+    gain = 0.12;
+  } else {
+    notes = [523, 659, 784, 1047, 1319];
+    gain = 0.15;
+  }
   notes.forEach((freq, i) => {
     const o = ctx.createOscillator(), g = ctx.createGain();
     o.connect(g); g.connect(ctx.destination);
     o.type = 'sine'; o.frequency.value = freq;
-    const st = ctx.currentTime + i * 0.09;
-    g.gain.setValueAtTime(0.15, st);
-    g.gain.exponentialRampToValueAtTime(0.001, st + 0.4);
-    o.start(st); o.stop(st + 0.45);
+    const st = ctx.currentTime + i * 0.11;
+    g.gain.setValueAtTime(gain, st);
+    g.gain.exponentialRampToValueAtTime(0.001, st + 0.45);
+    o.start(st); o.stop(st + 0.5);
   });
 }
 
@@ -1632,8 +2187,9 @@ function showConfirm(title, text, onOk) {
 }
 
 function clearWeek() {
-  showConfirm('deze week leegmaken?', 'alle maaltijden en symptomen van deze week worden gewist.', () => {
+  showConfirm('deze week leegmaken?', 'alle maaltijden, notities en symptomen van deze week worden gewist.', () => {
     delete state.weeks[state.currentWeekKey];
+    if (state.weekNotes) delete state.weekNotes[state.currentWeekKey];
     ensureWeek(state.currentWeekKey);
     render();
     saveState();
@@ -1690,6 +2246,7 @@ function handleImportFile(e) {
       }
       showConfirm('data overschrijven?', 'alle huidige data wordt vervangen door de backup.', () => {
         state.weeks = parsed.weeks || {};
+        state.weekNotes = parsed.weekNotes || {};
         if (parsed.currentWeekKey) state.currentWeekKey = parsed.currentWeekKey;
         render();
         saveState();
@@ -1701,8 +2258,9 @@ function handleImportFile(e) {
 }
 
 function resetEverything() {
-  showConfirm('alles wissen?', 'alle weken, maaltijden en symptomen worden definitief gewist. eerst exporteren als je iets wil bewaren!', () => {
+  showConfirm('alles wissen?', 'alle weken, maaltijden, notities en symptomen worden definitief gewist. eerst exporteren als je iets wil bewaren!', () => {
     state.weeks = {};
+    state.weekNotes = {};
     state.currentWeekKey = todayKey();
     ensureWeek(state.currentWeekKey);
     render();
@@ -1731,10 +2289,12 @@ document.addEventListener('click', e => {
     openModal(cell.dataset.day, cell.dataset.meal);
     return;
   }
-  const t = e.target.closest('[data-mcheck],[data-mdel],[data-sugg],[data-copyday],[data-copygo]');
+  const t = e.target.closest('[data-mcheck],[data-mskip],[data-mdel],[data-sugg],[data-copyday],[data-copygo]');
   if (!t || !openCell) return;
   if (t.dataset.mcheck !== undefined) {
     toggleItem(openCell.dayKey, openCell.mealKey, parseInt(t.dataset.mcheck, 10));
+  } else if (t.dataset.mskip !== undefined) {
+    toggleSkipItem(openCell.dayKey, openCell.mealKey, parseInt(t.dataset.mskip, 10));
   } else if (t.dataset.mdel !== undefined) {
     deleteItem(openCell.dayKey, openCell.mealKey, parseInt(t.dataset.mdel, 10));
   } else if (t.dataset.sugg) {
@@ -1787,6 +2347,18 @@ document.getElementById('modal-input').addEventListener('keydown', e => {
   if (e.key === 'Enter') addItemFromInput();
 });
 document.getElementById('modal-close').addEventListener('click', closeModal);
+
+let noteInputTimer = null;
+document.getElementById('meal-note-input').addEventListener('input', e => {
+  if (!openCell) return;
+  clearTimeout(noteInputTimer);
+  const val = e.target.value;
+  noteInputTimer = setTimeout(() => {
+    setCellNote(openCell.dayKey, openCell.mealKey, val);
+    render();
+    saveState();
+  }, 300);
+});
 
 document.getElementById('modal').addEventListener('click', e => {
   if (e.target.id === 'modal') closeModal();

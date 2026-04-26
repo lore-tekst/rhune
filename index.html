@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#7165D6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Spread Bingo">
+<title>my spread bingo</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%237165D6'/%3E%3Ctext x='50' y='66' font-family='Georgia,serif' font-size='52' font-weight='700' text-anchor='middle' fill='%23fff'%3EB%3C/text%3E%3C/svg%3E">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+  :root{
+    --pu1:#F5F3FE;--pu2:#E2DEFB;--pu3:#C8C1F5;--pu4:#9B91E8;
+    --pu5:#7165D6;--pu6:#534AB7;--pu7:#3A3285;--pu8:#26215C;
+    --pk1:#FDF0F5;--pk2:#F7D4E5;--pk3:#ED93B1;--pk4:#D4537E;
+    --bg:#FAFAFD;--text:#26215C;
+    --font-serif:'Cormorant Garamond','Hoefler Text',Georgia,'Times New Roman',serif;
+    --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+  }
+
+  html,body{
+    background:var(--bg);
+    min-height:100%;
+    overscroll-behavior-y:contain;
+  }
+
+  body{
+    font-family:var(--font-sans);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  .wrap{
+    max-width:560px;
+    margin:0 auto;
+    padding:1.5rem 1rem 3rem;
+  }
+
+  .app-title{
+    font-family:var(--font-serif);
+    font-size:34px;font-weight:700;
+    color:var(--pu7);
+    text-align:center;
+    letter-spacing:0.5px;
+    margin-bottom:2px;
+  }
+
+  .app-sub{
+    text-align:center;font-size:13px;
+    color:var(--pu5);margin-bottom:1.25rem;
+    font-style:italic;
+  }
+
+  .saved-indicator{
+    text-align:center;
+    font-size:11px;color:var(--pu4);
+    margin-bottom:1rem;
+    height:14px;
+    transition:opacity 0.3s;
+  }
+
+  .tabs{
+    display:flex;gap:6px;justify-content:center;
+    flex-wrap:wrap;margin-bottom:1.5rem;
+  }
+
+  .tab{
+    padding:8px 16px;border-radius:999px;
+    border:1.5px solid var(--pu3);
+    background:transparent;color:var(--pu6);
+    font-family:inherit;
+    font-size:12.5px;font-weight:500;
+    cursor:pointer;transition:all 0.16s;
+    touch-action:manipulation;
+  }
+  .tab.active{background:var(--pu5);border-color:var(--pu5);color:#fff;}
+  .tab:hover:not(.active){background:var(--pu1);}
+  .tab:active{transform:scale(0.97);}
+
+  .section{display:none;}
+  .section.visible{display:block;animation:fadeIn 0.2s ease;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+
+  .win-banner{
+    background:var(--pu5);color:#fff;
+    text-align:center;padding:12px 16px;
+    border-radius:12px;
+    font-size:17px;
+    margin:0 auto 14px;
+    max-width:480px;display:none;
+    font-family:var(--font-serif);
+    font-weight:600;
+    letter-spacing:0.3px;
+    box-shadow:0 4px 18px rgba(113,101,214,0.25);
+  }
+  .win-banner.show{display:block;animation:pop 0.35s cubic-bezier(.3,1.5,.5,1);}
+  @keyframes pop{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}
+
+  .progress-row{
+    display:flex;justify-content:center;
+    align-items:center;gap:10px;margin-bottom:12px;
+  }
+  .pbar-wrap{
+    width:170px;height:6px;
+    background:var(--pu2);border-radius:999px;overflow:hidden;
+  }
+  .pbar-fill{
+    height:100%;background:linear-gradient(90deg,var(--pu4),var(--pu5));
+    border-radius:999px;transition:width 0.4s ease;
+  }
+  .pbar-label{font-size:12px;color:var(--pu5);font-weight:500;}
+
+  .bingo-header{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:8px;max-width:440px;margin:0 auto 6px;
+  }
+  .bingo-letter{
+    text-align:center;
+    font-family:var(--font-serif);
+    font-size:24px;font-weight:700;color:var(--pu5);
+  }
+
+  .bingo-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);
+    gap:8px;max-width:440px;margin:0 auto 1rem;
+  }
+
+  .bcell{
+    aspect-ratio:1;border-radius:13px;
+    border:1.5px solid var(--pu3);
+    background:#fff;
+    display:flex;align-items:center;justify-content:center;
+    text-align:center;
+    font-size:13px;font-weight:500;
+    color:var(--pu7);
+    cursor:pointer;transition:all 0.18s ease;
+    padding:8px;line-height:1.25;
+    user-select:none;position:relative;overflow:hidden;
+    touch-action:manipulation;
+  }
+  .bcell:hover:not(.checked):not(.empty){background:var(--pu1);border-color:var(--pu4);}
+  .bcell:active:not(.empty){transform:scale(0.94);}
+  .bcell.checked{
+    background:var(--pu5);border-color:var(--pu5);color:#fff;
+    box-shadow:0 2px 10px rgba(113,101,214,0.3);
+  }
+  .bcell.checked::after{
+    content:'';position:absolute;inset:0;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='rgba(255,255,255,0.35)' stroke-width='2.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/40% no-repeat;
+    pointer-events:none;
+  }
+  .bcell.free-cell{
+    background:var(--pk2);border-color:var(--pk3);
+    color:var(--pk4);font-weight:600;font-size:9.5px;
+    cursor:default;
+  }
+  .bcell.empty{
+    background:var(--pu1);
+    border:1.5px dashed var(--pu3);
+    color:var(--pu3);
+    cursor:default;
+    font-size:18px;
+  }
+  .bcell.win-flash{animation:winFlash 0.6s ease;}
+  @keyframes winFlash{
+    0%,100%{transform:scale(1);}
+    50%{transform:scale(1.08);box-shadow:0 4px 18px rgba(212,83,126,0.5);}
+  }
+
+  .actions-row{
+    display:flex;justify-content:center;gap:10px;
+    flex-wrap:wrap;
+    margin-top:0.5rem;
+  }
+
+  .btn-secondary{
+    padding:8px 22px;background:transparent;
+    border:1.5px solid var(--pu3);border-radius:999px;
+    color:var(--pu6);
+    font-family:inherit;font-size:12.5px;
+    cursor:pointer;transition:all 0.14s;
+    touch-action:manipulation;
+  }
+  .btn-secondary:hover{background:var(--pu1);}
+  .btn-secondary:active{transform:scale(0.97);}
+  .btn-secondary.danger{color:#A32D2D;border-color:#F09595;}
+  .btn-secondary.danger:hover{background:#FCEBEB;}
+
+  .manage-section{max-width:480px;margin:0 auto;}
+
+  .manage-header{
+    font-family:var(--font-serif);
+    font-size:20px;font-weight:700;
+    color:var(--pu7);margin-bottom:4px;
+  }
+  .manage-meta{
+    font-size:12px;color:var(--pu4);margin-bottom:12px;
+  }
+
+  .item-list{
+    display:flex;flex-direction:column;gap:6px;margin-bottom:14px;
+    max-height:340px;overflow-y:auto;padding-right:4px;
+  }
+  .item-list::-webkit-scrollbar{width:6px;}
+  .item-list::-webkit-scrollbar-thumb{background:var(--pu2);border-radius:99px;}
+
+  .item-row{
+    display:flex;align-items:center;gap:8px;
+    padding:9px 12px;
+    background:#fff;
+    border-radius:10px;border:1.5px solid var(--pu2);
+    transition:border-color 0.14s;
+  }
+  .item-row:hover{border-color:var(--pu3);}
+  .item-row.in-board::before{
+    content:'';width:6px;height:6px;border-radius:50%;
+    background:var(--pu4);flex-shrink:0;
+  }
+  .item-row span{flex:1;font-size:13.5px;color:var(--pu8);}
+
+  .del-btn{
+    background:none;border:none;cursor:pointer;
+    color:var(--pu3);font-size:15px;line-height:1;
+    padding:4px 8px;border-radius:6px;transition:all 0.12s;
+    touch-action:manipulation;
+  }
+  .del-btn:hover{color:#A32D2D;background:#FCEBEB;}
+
+  .empty-state{
+    text-align:center;padding:24px 16px;
+    color:var(--pu4);font-style:italic;font-size:13px;
+    background:var(--pu1);border-radius:12px;
+    border:1.5px dashed var(--pu3);
+  }
+
+  .add-row{display:flex;gap:8px;}
+  .add-row input{
+    flex:1;padding:10px 14px;
+    border-radius:10px;border:1.5px solid var(--pu3);
+    font-family:inherit;font-size:16px;
+    background:#fff;
+    color:var(--text);outline:none;
+    transition:border-color 0.14s;
+    -webkit-appearance:none;
+  }
+  .add-row input:focus{border-color:var(--pu5);}
+
+  .add-btn{
+    padding:10px 18px;background:var(--pu5);color:#fff;
+    border:none;border-radius:10px;
+    font-family:inherit;font-size:14px;font-weight:500;
+    cursor:pointer;transition:all 0.14s;
+    touch-action:manipulation;
+  }
+  .add-btn:hover{background:var(--pu6);}
+  .add-btn:active{transform:scale(0.97);}
+
+  .hint{font-size:11.5px;color:var(--pu4);margin-top:10px;text-align:center;font-style:italic;}
+
+  .manage-tabs{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;}
+  .mtab{
+    padding:6px 14px;border-radius:999px;
+    border:1.5px solid var(--pu3);background:transparent;
+    color:var(--pu6);font-family:inherit;
+    font-size:12px;cursor:pointer;transition:all 0.14s;
+    touch-action:manipulation;
+  }
+  .mtab.active{background:var(--pu5);border-color:var(--pu5);color:#fff;}
+  .mtab:hover:not(.active){background:var(--pu1);}
+
+  .msection{display:none;}
+  .msection.visible{display:block;}
+
+  .footer-row{
+    margin-top:2rem;text-align:center;
+    font-size:11px;color:var(--pu4);
+    border-top:1.5px solid var(--pu2);
+    padding-top:1rem;
+  }
+  .footer-link{
+    color:var(--pu5);background:none;border:none;cursor:pointer;
+    font-family:inherit;font-size:11px;text-decoration:underline;
+    padding:6px 6px;
+    touch-action:manipulation;
+  }
+
+  .modal-bg{
+    position:fixed;inset:0;
+    background:rgba(38,33,92,0.45);
+    display:none;align-items:center;justify-content:center;
+    padding:1rem;z-index:100;
+    animation:fadeIn 0.2s ease;
+  }
+  .modal-bg.show{display:flex;}
+  .modal{
+    background:#fff;border-radius:16px;
+    padding:1.5rem;max-width:340px;width:100%;
+    text-align:center;
+  }
+  .modal-title{
+    font-family:var(--font-serif);
+    font-size:22px;font-weight:700;
+    color:var(--pu7);margin-bottom:8px;
+  }
+  .modal-text{font-size:13px;color:var(--pu6);margin-bottom:1.25rem;line-height:1.5;}
+  .modal-actions{display:flex;gap:8px;justify-content:center;}
+  .modal .btn-secondary{font-size:13px;padding:9px 20px;}
+  .modal .add-btn{font-size:13px;padding:9px 20px;}
+
+  @media (max-width:480px){
+    .wrap{padding:1.25rem 0.75rem 2.5rem;}
+    .app-title{font-size:30px;}
+    .app-sub{font-size:12px;margin-bottom:1rem;}
+    .tabs{gap:5px;margin-bottom:1.25rem;}
+    .tab{font-size:12px;padding:8px 14px;}
+    .bingo-header{gap:6px;}
+    .bingo-grid{gap:6px;}
+    .bcell{font-size:11.5px;padding:5px;border-radius:11px;line-height:1.2;}
+    .bingo-letter{font-size:21px;}
+    .pbar-wrap{width:140px;}
+    .win-banner{font-size:15px;padding:10px 14px;}
+    .item-row{padding:10px 12px;}
+    .item-row span{font-size:14px;}
+    .del-btn{padding:6px 10px;font-size:16px;}
+    .add-row input{font-size:16px;padding:11px 14px;}
+    .add-btn{padding:11px 18px;font-size:14px;}
+    .manage-tabs{gap:5px;}
+    .mtab{padding:7px 14px;font-size:12px;}
+    .actions-row{gap:8px;}
+    .btn-secondary{padding:9px 18px;font-size:12px;}
+    .footer-row{font-size:11px;line-height:1.7;}
+  }
+  @media (max-width:360px){
+    .bcell{font-size:10px;padding:3px;}
+    .tab{font-size:11px;padding:7px 11px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="app-title">my spread bingo</div>
+  <div class="app-sub">morning, laatje &amp; cookies</div>
+  <div class="saved-indicator" id="saved-indicator">&nbsp;</div>
+
+  <div class="tabs">
+    <button class="tab active" data-tab="morning">morning spreads</button>
+    <button class="tab" data-tab="evening">laatje</button>
+    <button class="tab" data-tab="cookies">cookies</button>
+    <button class="tab" data-tab="manage">manage lists</button>
+  </div>
+
+  <div id="section-morning" class="section visible">
+    <div id="win-morning" class="win-banner">a row! sweet morning win.</div>
+    <div class="progress-row">
+      <div class="pbar-wrap"><div class="pbar-fill" id="prog-morning" style="width:0%"></div></div>
+      <span class="pbar-label" id="prog-morning-txt">0 / 0</span>
+    </div>
+    <div class="bingo-header" id="hdr-morning"></div>
+    <div class="bingo-grid" id="grid-morning"></div>
+    <div class="actions-row">
+      <button class="btn-secondary" data-shuffle="morning">shuffle board</button>
+      <button class="btn-secondary danger" data-reset="morning">reset checks</button>
+    </div>
+  </div>
+
+  <div id="section-evening" class="section">
+    <div id="win-evening" class="win-banner">a row! laatje queen.</div>
+    <div class="progress-row">
+      <div class="pbar-wrap"><div class="pbar-fill" id="prog-evening" style="width:0%"></div></div>
+      <span class="pbar-label" id="prog-evening-txt">0 / 0</span>
+    </div>
+    <div class="bingo-header" id="hdr-evening"></div>
+    <div class="bingo-grid" id="grid-evening"></div>
+    <div class="actions-row">
+      <button class="btn-secondary" data-shuffle="evening">shuffle board</button>
+      <button class="btn-secondary danger" data-reset="evening">reset checks</button>
+    </div>
+  </div>
+
+  <div id="section-cookies" class="section">
+    <div id="win-cookies" class="win-banner">a row! cookie connoisseur.</div>
+    <div class="progress-row">
+      <div class="pbar-wrap"><div class="pbar-fill" id="prog-cookies" style="width:0%"></div></div>
+      <span class="pbar-label" id="prog-cookies-txt">0 / 0</span>
+    </div>
+    <div class="bingo-header" id="hdr-cookies"></div>
+    <div class="bingo-grid" id="grid-cookies"></div>
+    <div class="actions-row">
+      <button class="btn-secondary" data-shuffle="cookies">shuffle board</button>
+      <button class="btn-secondary danger" data-reset="cookies">reset checks</button>
+    </div>
+  </div>
+
+  <div id="section-manage" class="section">
+    <div class="manage-section">
+      <div class="manage-tabs">
+        <button class="mtab active" data-mtab="morning">morning</button>
+        <button class="mtab" data-mtab="evening">laatje</button>
+        <button class="mtab" data-mtab="cookies">cookies</button>
+      </div>
+
+      <div id="mpanel-morning" class="msection visible">
+        <div class="manage-header">morning spreads</div>
+        <div class="manage-meta" id="meta-morning">0 items · 0 on board</div>
+        <div class="item-list" id="list-morning"></div>
+        <div class="add-row">
+          <input id="in-morning" type="text" placeholder="Add a morning spread..." maxlength="30" autocomplete="off">
+          <button class="add-btn" data-add="morning">Add</button>
+        </div>
+        <p class="hint">first 12 items appear on the board · purple dot = on board</p>
+      </div>
+
+      <div id="mpanel-evening" class="msection">
+        <div class="manage-header">laatje</div>
+        <div class="manage-meta" id="meta-evening">0 items · 0 on board</div>
+        <div class="item-list" id="list-evening"></div>
+        <div class="add-row">
+          <input id="in-evening" type="text" placeholder="Add a laatje spread..." maxlength="30" autocomplete="off">
+          <button class="add-btn" data-add="evening">Add</button>
+        </div>
+        <p class="hint">first 12 items appear on the board · purple dot = on board</p>
+      </div>
+
+      <div id="mpanel-cookies" class="msection">
+        <div class="manage-header">cookies</div>
+        <div class="manage-meta" id="meta-cookies">0 items · 0 on board</div>
+        <div class="item-list" id="list-cookies"></div>
+        <div class="add-row">
+          <input id="in-cookies" type="text" placeholder="Add a cookie..." maxlength="30" autocomplete="off">
+          <button class="add-btn" data-add="cookies">Add</button>
+        </div>
+        <p class="hint">first 12 items appear on the board · purple dot = on board</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-row">
+    progress saved automatically on this device
+    <br>
+    <button class="footer-link" id="export-btn">export backup</button>
+    ·
+    <button class="footer-link" id="import-btn">import backup</button>
+    ·
+    <button class="footer-link" id="reset-all-btn">reset everything</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-title" id="modal-title">are you sure?</div>
+    <div class="modal-text" id="modal-text">this can't be undone.</div>
+    <div class="modal-actions">
+      <button class="btn-secondary" id="modal-cancel">cancel</button>
+      <button class="add-btn" id="modal-ok">yes</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="file-input" accept=".json,application/json" style="display:none">
+
+<script>
+const STORAGE_KEY = 'spread-bingo-v1';
+
+const DEFAULTS = {
+  morning: ['Butter','Jam','Honey','Nutella','Peanut Butter','Cream Cheese','Marmalade','Speculoos','Tahini','Ricotta','Brie','Hummus','Almond Butter','Lemon Curd','Avocado','Hazelnut Spread','Cashew Butter','Mango Jam','Fig Jam','Cheddar','Goat Cheese','Herb Butter','Dulce de Leche','Apple Butter','Sun-Dried Tomato'],
+  evening: ['Tapenade','Pesto','Tzatziki','Guacamole','Baba Ganoush','Blue Cheese','Camembert','Rillettes','Smoked Salmon','Liver Pâté','Sardine Spread','Anchovy Butter','Roquefort','Truffle Butter','Crab Rillettes','Eggplant Caviar','Brandade','Smoked Mackerel','Chorizo Butter','Sobrassada','Nduja','Muhammara','Artichoke Dip','White Bean Spread','Smoked Oyster'],
+  cookies: ['Chocolate Chip','Speculoos','Stroopwafel','Oreo','Macaroon','Shortbread','Amaretti','Ladyfinger','Linzer','Pizzelle','Florentine','Madeleine','Meringue','Biscotti','Snickerdoodle','Gingerbread','Oatmeal Raisin','Peanut Butter','Spritz','Windmill','Coconut Macaroon','Lemon Bar','Brownie Bite','Waffle Cookie','Butter Cookie']
+};
+
+let state = {
+  morning: { items: [...DEFAULTS.morning], checked: [], wonShown: false },
+  evening: { items: [...DEFAULTS.evening], checked: [], wonShown: false },
+  cookies: { items: [...DEFAULTS.cookies], checked: [], wonShown: false }
+};
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    ['morning','evening','cookies'].forEach(b => {
+      if (parsed[b]) {
+        state[b].items = Array.isArray(parsed[b].items) ? parsed[b].items : [...DEFAULTS[b]];
+        state[b].checked = Array.isArray(parsed[b].checked) ? parsed[b].checked : [];
+        state[b].wonShown = !!parsed[b].wonShown;
+      }
+    });
+  } catch (e) {
+    console.warn('load failed', e);
+  }
+}
+
+let saveTimer = null;
+function saveState() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      const toSave = {};
+      ['morning','evening','cookies'].forEach(b => {
+        toSave[b] = { items: state[b].items, checked: state[b].checked, wonShown: state[b].wonShown };
+      });
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
+      flashSaved();
+    } catch (e) {
+      console.warn('save failed', e);
+    }
+  }, 200);
+}
+
+let savedFlashTimer = null;
+function flashSaved() {
+  const el = document.getElementById('saved-indicator');
+  el.textContent = 'saved ✓';
+  el.style.opacity = '1';
+  clearTimeout(savedFlashTimer);
+  savedFlashTimer = setTimeout(() => { el.style.opacity = '0'; }, 1200);
+}
+
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return null; }
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function playCheck() {
+  const ctx = getAudio(); if (!ctx) return;
+  [[523,0],[659,0.07],[784,0.14]].forEach(([f,t]) => {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'sine'; o.frequency.value = f;
+    const st = ctx.currentTime + t;
+    g.gain.setValueAtTime(0.13, st);
+    g.gain.exponentialRampToValueAtTime(0.001, st + 0.3);
+    o.start(st); o.stop(st + 0.35);
+  });
+}
+
+function playUncheck() {
+  const ctx = getAudio(); if (!ctx) return;
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.connect(g); g.connect(ctx.destination);
+  o.type = 'sine'; o.frequency.value = 440;
+  o.frequency.exponentialRampToValueAtTime(330, ctx.currentTime + 0.15);
+  g.gain.setValueAtTime(0.08, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.2);
+  o.start(); o.stop(ctx.currentTime + 0.2);
+}
+
+function playBingo() {
+  const ctx = getAudio(); if (!ctx) return;
+  [[523,0],[659,0.1],[784,0.2],[1047,0.3],[1319,0.4]].forEach(([f,t]) => {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'sine'; o.frequency.value = f;
+    const st = ctx.currentTime + t;
+    g.gain.setValueAtTime(0.18, st);
+    g.gain.exponentialRampToValueAtTime(0.001, st + 0.45);
+    o.start(st); o.stop(st + 0.5);
+  });
+}
+
+function getBoardItems(b) {
+  const items = state[b].items.slice(0, 12);
+  while (items.length < 12) items.push('');
+  return items;
+}
+
+function renderBoard(b) {
+  const items = getBoardItems(b);
+  const checked = state[b].checked;
+  const letters = ['B','I','N','G'];
+
+  document.getElementById('hdr-' + b).innerHTML =
+    letters.map(l => `<div class="bingo-letter">${l}</div>`).join('');
+
+  document.getElementById('grid-' + b).innerHTML = items.map((it, i) => {
+    const isEmpty = !it;
+    const ck = checked.includes(i);
+    let cls = 'bcell';
+    if (isEmpty) cls += ' empty';
+    else if (ck) cls += ' checked';
+    const content = isEmpty ? '+' : escapeHTML(it);
+    const click = isEmpty ? '' : `data-toggle="${b}" data-idx="${i}"`;
+    return `<div class="${cls}" ${click}>${content}</div>`;
+  }).join('');
+
+  updateProgress(b);
+}
+
+function updateProgress(b) {
+  const items = getBoardItems(b);
+  const total = items.filter(x => x).length;
+  const done = state[b].checked.filter(i => items[i]).length;
+  const pct = total ? Math.round(done / total * 100) : 0;
+  document.getElementById('prog-' + b).style.width = pct + '%';
+  document.getElementById('prog-' + b + '-txt').textContent = done + ' / ' + total;
+}
+
+function toggle(b, i) {
+  const items = getBoardItems(b);
+  if (!items[i]) return;
+  const idx = state[b].checked.indexOf(i);
+  if (idx >= 0) {
+    state[b].checked.splice(idx, 1);
+    state[b].wonShown = false;
+    document.getElementById('win-' + b).classList.remove('show');
+    playUncheck();
+    renderBoard(b);
+  } else {
+    state[b].checked.push(i);
+    playCheck();
+    renderBoard(b);
+    setTimeout(() => checkBingo(b), 180);
+  }
+  saveState();
+}
+
+const LINES = [
+  [0,1,2,3],[4,5,6,7],[8,9,10,11],
+  [0,4,8],[1,5,9],[2,6,10],[3,7,11]
+];
+
+function checkBingo(b) {
+  const ck = new Set(state[b].checked);
+  const items = getBoardItems(b);
+  const wonLine = LINES.find(line => line.every(i => ck.has(i) && items[i]));
+  if (wonLine && !state[b].wonShown) {
+    state[b].wonShown = true;
+    document.getElementById('win-' + b).classList.add('show');
+    playBingo();
+    saveState();
+    flashWinningCells(b, wonLine);
+  }
+}
+
+function flashWinningCells(b, line) {
+  const cells = document.querySelectorAll('#grid-' + b + ' .bcell');
+  line.forEach((i, n) => {
+    setTimeout(() => {
+      if (cells[i]) {
+        cells[i].classList.add('win-flash');
+        setTimeout(() => cells[i] && cells[i].classList.remove('win-flash'), 600);
+      }
+    }, n * 80);
+  });
+}
+
+function resetBoard(b) {
+  state[b].checked = [];
+  state[b].wonShown = false;
+  document.getElementById('win-' + b).classList.remove('show');
+  renderBoard(b);
+  saveState();
+}
+
+function shuffleBoard(b) {
+  const arr = state[b].items;
+  for (let i = arr.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [arr[i], arr[j]] = [arr[j], arr[i]];
+  }
+  state[b].checked = [];
+  state[b].wonShown = false;
+  document.getElementById('win-' + b).classList.remove('show');
+  renderBoard(b);
+  renderList(b);
+  saveState();
+}
+
+function renderList(b) {
+  const items = state[b].items;
+  const meta = document.getElementById('meta-' + b);
+  const onBoardCount = Math.min(items.length, 12);
+  meta.textContent = `${items.length} item${items.length === 1 ? '' : 's'} · ${onBoardCount} on board`;
+
+  const listEl = document.getElementById('list-' + b);
+  if (items.length === 0) {
+    listEl.innerHTML = '<div class="empty-state">no items yet · add one below</div>';
+    return;
+  }
+  listEl.innerHTML = items.map((it, i) => {
+    const onBoardSlot = i < 12;
+    return `<div class="item-row ${onBoardSlot ? 'in-board' : ''}">
+      <span>${escapeHTML(it)}</span>
+      <button class="del-btn" data-del="${b}" data-idx="${i}" aria-label="remove">&#x2715;</button>
+    </div>`;
+  }).join('');
+}
+
+function addItem(b) {
+  const inp = document.getElementById('in-' + b);
+  const v = inp.value.trim();
+  if (!v) return;
+  if (state[b].items.some(x => x.toLowerCase() === v.toLowerCase())) {
+    inp.value = '';
+    inp.style.borderColor = '#F09595';
+    setTimeout(() => { inp.style.borderColor = ''; }, 900);
+    return;
+  }
+  state[b].items.push(v);
+  inp.value = '';
+  renderList(b);
+  renderBoard(b);
+  saveState();
+}
+
+function delItem(b, i) {
+  state[b].items.splice(i, 1);
+  state[b].checked = state[b].checked
+    .map(c => c > i ? c - 1 : c)
+    .filter(c => c !== i && c >= 0 && c < 12);
+  renderList(b);
+  renderBoard(b);
+  saveState();
+}
+
+function switchTab(name) {
+  document.querySelectorAll('.tab').forEach(t => {
+    t.classList.toggle('active', t.dataset.tab === name);
+  });
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('visible'));
+  document.getElementById('section-' + name).classList.add('visible');
+}
+
+function switchMTab(name) {
+  document.querySelectorAll('.mtab').forEach(t => {
+    t.classList.toggle('active', t.dataset.mtab === name);
+  });
+  document.querySelectorAll('.msection').forEach(s => s.classList.remove('visible'));
+  document.getElementById('mpanel-' + name).classList.add('visible');
+}
+
+function escapeHTML(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function showModal(title, text, onOk) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-text').textContent = text;
+  document.getElementById('modal').classList.add('show');
+  const ok = document.getElementById('modal-ok');
+  const cancel = document.getElementById('modal-cancel');
+  const close = () => document.getElementById('modal').classList.remove('show');
+  const okHandler = () => { close(); onOk(); ok.removeEventListener('click', okHandler); cancel.removeEventListener('click', cancelHandler); };
+  const cancelHandler = () => { close(); ok.removeEventListener('click', okHandler); cancel.removeEventListener('click', cancelHandler); };
+  ok.addEventListener('click', okHandler);
+  cancel.addEventListener('click', cancelHandler);
+}
+
+function exportBackup() {
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const date = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `spread-bingo-backup-${date}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function importBackup() {
+  document.getElementById('file-input').click();
+}
+
+function handleImportFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      if (!parsed.morning || !parsed.evening || !parsed.cookies) {
+        alert('That doesn\'t look like a valid backup file.');
+        return;
+      }
+      showModal('replace your data?', 'this will overwrite your current bingo with the backup file.', () => {
+        ['morning','evening','cookies'].forEach(b => {
+          state[b].items = Array.isArray(parsed[b].items) ? parsed[b].items : [...DEFAULTS[b]];
+          state[b].checked = Array.isArray(parsed[b].checked) ? parsed[b].checked : [];
+          state[b].wonShown = !!parsed[b].wonShown;
+          renderBoard(b);
+          renderList(b);
+          document.getElementById('win-' + b).classList.remove('show');
+        });
+        saveState();
+      });
+    } catch (err) {
+      alert('Could not read that file.');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function resetEverything() {
+  showModal('start fresh?', 'this clears all your spreads, cookies and progress. backup first if you want to keep them!', () => {
+    state = {
+      morning: { items: [...DEFAULTS.morning], checked: [], wonShown: false },
+      evening: { items: [...DEFAULTS.evening], checked: [], wonShown: false },
+      cookies: { items: [...DEFAULTS.cookies], checked: [], wonShown: false }
+    };
+    ['morning','evening','cookies'].forEach(b => {
+      document.getElementById('win-' + b).classList.remove('show');
+      renderBoard(b);
+      renderList(b);
+    });
+    saveState();
+  });
+}
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-tab],[data-mtab],[data-toggle],[data-add],[data-del],[data-shuffle],[data-reset]');
+  if (!t) return;
+  if (t.dataset.tab) switchTab(t.dataset.tab);
+  else if (t.dataset.mtab) switchMTab(t.dataset.mtab);
+  else if (t.dataset.toggle) toggle(t.dataset.toggle, parseInt(t.dataset.idx, 10));
+  else if (t.dataset.add) addItem(t.dataset.add);
+  else if (t.dataset.del) delItem(t.dataset.del, parseInt(t.dataset.idx, 10));
+  else if (t.dataset.shuffle) {
+    const b = t.dataset.shuffle;
+    showModal('shuffle the board?', 'this rearranges your items and clears any current checks for this board.', () => shuffleBoard(b));
+  }
+  else if (t.dataset.reset) resetBoard(t.dataset.reset);
+});
+
+['morning','evening','cookies'].forEach(b => {
+  const inp = document.getElementById('in-' + b);
+  inp.addEventListener('keydown', e => { if (e.key === 'Enter') addItem(b); });
+});
+
+document.getElementById('export-btn').addEventListener('click', exportBackup);
+document.getElementById('import-btn').addEventListener('click', importBackup);
+document.getElementById('file-input').addEventListener('change', handleImportFile);
+document.getElementById('reset-all-btn').addEventListener('click', resetEverything);
+
+try {
+  loadState();
+} catch(e) {
+  console.warn('loadState error', e);
+}
+
+['morning','evening','cookies'].forEach(b => {
+  try {
+    renderBoard(b);
+    renderList(b);
+  } catch(e) {
+    console.warn('render error for ' + b, e);
+  }
+});
+</script>
+</body>
+</html>

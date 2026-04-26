@@ -1,0 +1,1112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#7165D6">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Meal Plan">
+<title>my meal plan</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%237165D6'/%3E%3Ctext x='50' y='66' font-family='Georgia,serif' font-size='52' font-weight='700' text-anchor='middle' fill='%23fff'%3EM%3C/text%3E%3C/svg%3E">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+
+  :root{
+    --pu0:#FBFAFE;
+    --pu1:#F2EFFE;
+    --pu2:#E2DEFB;
+    --pu3:#C8C1F5;
+    --pu4:#9B91E8;
+    --pu5:#7165D6;
+    --pu6:#534AB7;
+    --pu7:#3A3285;
+    --pu8:#26215C;
+    --pk2:#F7D4E5;
+    --pk3:#ED93B1;
+    --pk4:#D4537E;
+    --bg:#F4F0FE;
+    --text:#26215C;
+    --font-serif:'Cormorant Garamond','Hoefler Text',Georgia,'Times New Roman',serif;
+    --font-sans:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;
+  }
+
+  html,body{
+    background:var(--bg);
+    min-height:100%;
+    overscroll-behavior-y:contain;
+  }
+
+  body{
+    font-family:var(--font-sans);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+  }
+
+  .wrap{
+    max-width:1200px;
+    margin:0 auto;
+    padding:1.5rem 1rem 3rem;
+  }
+
+  .header{
+    text-align:center;
+    margin-bottom:1.25rem;
+  }
+
+  .app-title{
+    font-family:var(--font-serif);
+    font-size:36px;font-weight:700;
+    color:var(--pu7);
+    letter-spacing:0.5px;
+    margin-bottom:2px;
+  }
+
+  .app-sub{
+    font-size:13px;
+    color:var(--pu5);
+    font-style:italic;
+    margin-bottom:0.5rem;
+  }
+
+  .saved-indicator{
+    font-size:11px;color:var(--pu4);
+    height:14px;
+    transition:opacity 0.3s;
+    margin-bottom:0.25rem;
+  }
+
+  .week-bar{
+    display:flex;align-items:center;justify-content:center;
+    gap:8px;margin-bottom:1.25rem;flex-wrap:wrap;
+  }
+
+  .week-nav-btn{
+    background:#fff;border:1.5px solid var(--pu3);
+    border-radius:999px;
+    width:34px;height:34px;
+    display:inline-flex;align-items:center;justify-content:center;
+    color:var(--pu5);cursor:pointer;
+    font-size:18px;line-height:1;
+    transition:all 0.14s;
+    touch-action:manipulation;
+  }
+  .week-nav-btn:hover{background:var(--pu1);}
+  .week-nav-btn:active{transform:scale(0.94);}
+
+  .week-label{
+    font-family:var(--font-serif);
+    font-size:18px;font-weight:600;
+    color:var(--pu7);
+    min-width:160px;text-align:center;
+    padding:6px 14px;
+    background:#fff;border-radius:999px;
+    border:1.5px solid var(--pu3);
+  }
+
+  .week-label.current{
+    background:var(--pu5);color:#fff;border-color:var(--pu5);
+  }
+
+  .actions{
+    display:flex;justify-content:center;gap:8px;
+    flex-wrap:wrap;margin-bottom:1.25rem;
+  }
+
+  .btn{
+    padding:8px 18px;border-radius:999px;
+    border:1.5px solid var(--pu3);
+    background:transparent;color:var(--pu6);
+    font-family:inherit;font-size:12.5px;font-weight:500;
+    cursor:pointer;transition:all 0.14s;
+    touch-action:manipulation;
+  }
+  .btn:hover{background:var(--pu1);}
+  .btn:active{transform:scale(0.97);}
+  .btn-primary{
+    background:var(--pu5);border-color:var(--pu5);color:#fff;
+  }
+  .btn-primary:hover{background:var(--pu6);border-color:var(--pu6);}
+
+  .week-grid{
+    display:grid;
+    grid-template-columns:90px repeat(6,1fr);
+    gap:6px;
+    background:var(--pu2);
+    padding:6px;
+    border-radius:14px;
+  }
+
+  .col-header{
+    font-family:var(--font-serif);
+    font-size:13px;font-weight:600;
+    color:var(--pu7);
+    text-align:center;
+    padding:10px 6px;
+    background:var(--pu3);
+    border-radius:9px;
+    line-height:1.2;
+  }
+
+  .col-header.first{
+    background:var(--pu5);color:#fff;
+  }
+
+  .day-label{
+    font-family:var(--font-serif);
+    font-size:14px;font-weight:600;
+    color:#fff;
+    background:var(--pu5);
+    border-radius:9px;
+    padding:14px 6px;
+    text-align:center;
+    line-height:1.2;
+    display:flex;flex-direction:column;justify-content:center;
+    min-height:90px;
+  }
+
+  .day-label.today{
+    background:var(--pk4);
+  }
+
+  .day-label .dn{font-size:14px;font-weight:600;}
+  .day-label .dd{font-size:11px;font-weight:400;opacity:0.85;margin-top:2px;}
+
+  .meal-cell{
+    background:#fff;
+    border-radius:9px;
+    padding:6px 7px;
+    min-height:90px;
+    cursor:pointer;
+    transition:all 0.14s;
+    display:flex;flex-direction:column;
+    gap:3px;
+    border:1.5px solid transparent;
+    touch-action:manipulation;
+  }
+  .meal-cell:hover{border-color:var(--pu3);background:var(--pu0);}
+  .meal-cell.has-items{}
+  .meal-cell.empty-cell{background:var(--pu0);}
+
+  .meal-item{
+    font-size:11.5px;
+    color:var(--pu8);
+    line-height:1.3;
+    display:flex;align-items:flex-start;gap:5px;
+    padding:1px 0;
+  }
+  .meal-item .dot{
+    width:9px;height:9px;
+    border-radius:50%;
+    border:1.5px solid var(--pu4);
+    background:transparent;
+    flex-shrink:0;
+    margin-top:3px;
+    transition:all 0.14s;
+  }
+  .meal-item.checked .dot{
+    background:var(--pu5);border-color:var(--pu5);
+    position:relative;
+  }
+  .meal-item.checked .dot::after{
+    content:'';position:absolute;
+    inset:1px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+  .meal-item.checked .it{
+    text-decoration:line-through;
+    color:var(--pu4);
+  }
+  .meal-item .it{flex:1;word-break:break-word;}
+  .add-hint{
+    font-size:10.5px;color:var(--pu3);
+    text-align:center;
+    margin:auto 0;
+    font-style:italic;
+  }
+
+  .symptom-cell .dot{border-color:var(--pk3);}
+  .symptom-cell .meal-item.checked .dot{background:var(--pk4);border-color:var(--pk4);}
+
+  .modal-bg{
+    position:fixed;inset:0;
+    background:rgba(38,33,92,0.5);
+    display:none;align-items:flex-end;justify-content:center;
+    padding:0;z-index:100;
+    animation:fadeIn 0.2s ease;
+  }
+  .modal-bg.show{display:flex;}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+  .modal{
+    background:#fff;
+    border-radius:20px 20px 0 0;
+    padding:1.5rem 1.25rem 1.75rem;
+    max-width:520px;width:100%;
+    max-height:85vh;
+    overflow-y:auto;
+    animation:slideUp 0.25s cubic-bezier(.3,1.2,.5,1);
+  }
+  @keyframes slideUp{from{transform:translateY(100%)}to{transform:none}}
+
+  .modal-handle{
+    width:40px;height:4px;
+    background:var(--pu2);
+    border-radius:99px;
+    margin:0 auto 14px;
+  }
+
+  .modal-day{
+    font-size:11px;color:var(--pu4);
+    text-align:center;
+    text-transform:uppercase;letter-spacing:1.5px;
+    font-weight:500;
+    margin-bottom:4px;
+  }
+
+  .modal-title{
+    font-family:var(--font-serif);
+    font-size:24px;font-weight:700;
+    color:var(--pu7);
+    text-align:center;
+    margin-bottom:1.25rem;
+  }
+
+  .modal-items{
+    display:flex;flex-direction:column;
+    gap:6px;
+    margin-bottom:1rem;
+  }
+
+  .modal-item{
+    display:flex;align-items:center;gap:10px;
+    padding:10px 12px;
+    background:var(--pu1);
+    border-radius:11px;
+    border:1.5px solid var(--pu2);
+    transition:border-color 0.14s;
+  }
+  .modal-item:hover{border-color:var(--pu3);}
+  .modal-item.checked{
+    background:var(--pu5);
+    border-color:var(--pu5);
+  }
+  .modal-item.checked .modal-item-text{
+    color:#fff;
+    text-decoration:line-through;
+    text-decoration-color:rgba(255,255,255,0.6);
+  }
+
+  .modal-check{
+    width:22px;height:22px;
+    border-radius:50%;
+    border:2px solid var(--pu4);
+    background:transparent;
+    flex-shrink:0;
+    cursor:pointer;
+    position:relative;
+    transition:all 0.14s;
+    touch-action:manipulation;
+  }
+  .modal-item.checked .modal-check{
+    background:#fff;border-color:#fff;
+  }
+  .modal-item.checked .modal-check::after{
+    content:'';position:absolute;
+    inset:2px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%237165D6' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+
+  .modal-item-text{
+    flex:1;font-size:15px;color:var(--pu8);
+    word-break:break-word;
+  }
+
+  .modal-del{
+    background:none;border:none;cursor:pointer;
+    color:var(--pu3);font-size:16px;line-height:1;
+    padding:6px 10px;border-radius:8px;
+    transition:all 0.12s;
+    touch-action:manipulation;
+  }
+  .modal-del:hover{color:#A32D2D;background:#FCEBEB;}
+  .modal-item.checked .modal-del{color:rgba(255,255,255,0.7);}
+  .modal-item.checked .modal-del:hover{color:#fff;background:rgba(255,255,255,0.15);}
+
+  .modal-add{
+    display:flex;gap:8px;
+    margin-bottom:1rem;
+  }
+  .modal-add input{
+    flex:1;padding:11px 14px;
+    border-radius:11px;border:1.5px solid var(--pu3);
+    font-family:inherit;font-size:16px;
+    background:#fff;color:var(--text);
+    outline:none;-webkit-appearance:none;
+    transition:border-color 0.14s;
+  }
+  .modal-add input:focus{border-color:var(--pu5);}
+
+  .modal-add-btn{
+    padding:11px 18px;background:var(--pu5);color:#fff;
+    border:none;border-radius:11px;
+    font-family:inherit;font-size:14px;font-weight:500;
+    cursor:pointer;transition:all 0.14s;
+    touch-action:manipulation;
+  }
+  .modal-add-btn:hover{background:var(--pu6);}
+  .modal-add-btn:active{transform:scale(0.97);}
+
+  .modal-empty{
+    text-align:center;
+    color:var(--pu4);
+    font-size:13px;font-style:italic;
+    padding:1rem 0;
+  }
+
+  .modal-suggestions{
+    margin-bottom:1rem;
+  }
+  .modal-suggestions-label{
+    font-size:11px;color:var(--pu4);
+    text-transform:uppercase;letter-spacing:1px;
+    margin-bottom:6px;
+    font-weight:500;
+  }
+  .suggestion-chips{
+    display:flex;flex-wrap:wrap;gap:6px;
+  }
+  .chip{
+    padding:6px 12px;
+    background:var(--pu1);border:1.5px solid var(--pu2);
+    border-radius:999px;
+    font-family:inherit;font-size:12px;color:var(--pu6);
+    cursor:pointer;transition:all 0.14s;
+    touch-action:manipulation;
+  }
+  .chip:hover{background:var(--pu2);border-color:var(--pu3);}
+  .chip:active{transform:scale(0.96);}
+
+  .modal-close{
+    display:block;margin:0.5rem auto 0;
+    padding:10px 28px;
+    background:transparent;
+    border:1.5px solid var(--pu3);border-radius:999px;
+    color:var(--pu6);
+    font-family:inherit;font-size:13px;
+    cursor:pointer;transition:all 0.14s;
+    touch-action:manipulation;
+  }
+  .modal-close:hover{background:var(--pu1);}
+
+  .footer-row{
+    margin-top:2rem;text-align:center;
+    font-size:11px;color:var(--pu4);
+    border-top:1.5px solid var(--pu2);
+    padding-top:1rem;
+    line-height:1.7;
+  }
+  .footer-link{
+    color:var(--pu5);background:none;border:none;cursor:pointer;
+    font-family:inherit;font-size:11px;text-decoration:underline;
+    padding:6px 6px;
+    touch-action:manipulation;
+  }
+
+  .confirm-modal-bg{
+    position:fixed;inset:0;
+    background:rgba(38,33,92,0.5);
+    display:none;align-items:center;justify-content:center;
+    padding:1rem;z-index:200;
+  }
+  .confirm-modal-bg.show{display:flex;animation:fadeIn 0.2s ease;}
+  .confirm-modal{
+    background:#fff;border-radius:16px;
+    padding:1.5rem;max-width:340px;width:100%;
+    text-align:center;
+  }
+  .confirm-title{
+    font-family:var(--font-serif);
+    font-size:22px;font-weight:700;
+    color:var(--pu7);margin-bottom:8px;
+  }
+  .confirm-text{font-size:13px;color:var(--pu6);margin-bottom:1.25rem;line-height:1.5;}
+  .confirm-actions{display:flex;gap:8px;justify-content:center;}
+  .confirm-actions .btn{font-size:13px;padding:9px 20px;}
+  .confirm-actions .btn-primary{font-size:13px;padding:9px 20px;}
+
+  @media (max-width:760px){
+    .wrap{padding:1.25rem 0.5rem 2.5rem;}
+    .app-title{font-size:30px;}
+    .week-grid{display:none;}
+    .mobile-view{display:block;}
+  }
+  @media (min-width:761px){
+    .mobile-view{display:none;}
+  }
+
+  .mobile-view{
+    display:none;
+  }
+
+  .mobile-day{
+    background:#fff;
+    border-radius:14px;
+    margin-bottom:10px;
+    overflow:hidden;
+    border:1.5px solid var(--pu2);
+  }
+  .mobile-day.today{
+    border-color:var(--pk3);
+    border-width:2px;
+  }
+  .mobile-day-head{
+    background:var(--pu5);
+    color:#fff;
+    padding:10px 14px;
+    display:flex;align-items:center;justify-content:space-between;
+    font-family:var(--font-serif);
+    font-size:18px;font-weight:600;
+  }
+  .mobile-day.today .mobile-day-head{background:var(--pk4);}
+  .mobile-day-head .date{font-size:12px;font-weight:400;opacity:0.85;}
+
+  .mobile-meals{
+    display:flex;flex-direction:column;
+  }
+
+  .mobile-meal{
+    display:flex;
+    border-bottom:1px solid var(--pu1);
+    padding:9px 14px;
+    cursor:pointer;
+    align-items:flex-start;
+    gap:10px;
+    touch-action:manipulation;
+    transition:background 0.14s;
+  }
+  .mobile-meal:last-child{border-bottom:none;}
+  .mobile-meal:active{background:var(--pu1);}
+
+  .mobile-meal-label{
+    font-size:11px;color:var(--pu5);
+    text-transform:uppercase;letter-spacing:1px;
+    font-weight:500;
+    width:88px;
+    flex-shrink:0;
+    padding-top:2px;
+    line-height:1.3;
+  }
+  .mobile-meal-items{
+    flex:1;
+    display:flex;flex-direction:column;
+    gap:3px;
+  }
+  .mobile-meal-item{
+    font-size:13px;color:var(--pu8);
+    line-height:1.4;
+    display:flex;align-items:flex-start;gap:7px;
+  }
+  .mobile-meal-item .dot{
+    width:11px;height:11px;
+    border-radius:50%;
+    border:1.5px solid var(--pu4);
+    flex-shrink:0;
+    margin-top:4px;
+  }
+  .mobile-meal-item.checked .dot{
+    background:var(--pu5);border-color:var(--pu5);
+    position:relative;
+  }
+  .mobile-meal-item.checked .dot::after{
+    content:'';position:absolute;
+    inset:1px;
+    background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='20 6 9 17 4 12'/%3E%3C/svg%3E") center/contain no-repeat;
+  }
+  .mobile-meal-item.checked .it{
+    text-decoration:line-through;color:var(--pu4);
+  }
+  .mobile-meal-item .it{flex:1;word-break:break-word;}
+
+  .mobile-meal.empty .mobile-meal-items{
+    color:var(--pu3);font-style:italic;font-size:12px;
+  }
+  .mobile-meal.symptoms .dot{border-color:var(--pk3);}
+  .mobile-meal.symptoms .mobile-meal-item.checked .dot{background:var(--pk4);border-color:var(--pk4);}
+
+  @media (max-width:380px){
+    .app-title{font-size:26px;}
+    .mobile-meal-label{width:78px;font-size:10.5px;}
+    .mobile-meal-item{font-size:12.5px;}
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <div class="header">
+    <div class="app-title">my meal plan</div>
+    <div class="app-sub">een week vol lekkers</div>
+    <div class="saved-indicator" id="saved-indicator">&nbsp;</div>
+  </div>
+
+  <div class="week-bar">
+    <button class="week-nav-btn" id="prev-week" aria-label="vorige week">‹</button>
+    <div class="week-label" id="week-label">deze week</div>
+    <button class="week-nav-btn" id="next-week" aria-label="volgende week">›</button>
+  </div>
+
+  <div class="actions">
+    <button class="btn" id="today-btn">vandaag</button>
+    <button class="btn" id="clear-week-btn">leeg deze week</button>
+    <button class="btn" id="copy-prev-btn">kopieer vorige week</button>
+  </div>
+
+  <div class="week-grid" id="week-grid"></div>
+  <div class="mobile-view" id="mobile-view"></div>
+
+  <div class="footer-row">
+    voortgang automatisch opgeslagen op dit toestel
+    <br>
+    <button class="footer-link" id="export-btn">backup exporteren</button>
+    ·
+    <button class="footer-link" id="import-btn">backup importeren</button>
+    ·
+    <button class="footer-link" id="reset-all-btn">alles wissen</button>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal">
+  <div class="modal">
+    <div class="modal-handle"></div>
+    <div class="modal-day" id="modal-day-label"></div>
+    <div class="modal-title" id="modal-title"></div>
+    <div class="modal-items" id="modal-items"></div>
+    <div class="modal-add">
+      <input id="modal-input" type="text" placeholder="Toevoegen..." maxlength="60" autocomplete="off">
+      <button class="modal-add-btn" id="modal-add-btn">+</button>
+    </div>
+    <div class="modal-suggestions" id="modal-suggestions"></div>
+    <button class="modal-close" id="modal-close">klaar</button>
+  </div>
+</div>
+
+<div class="confirm-modal-bg" id="confirm-modal">
+  <div class="confirm-modal">
+    <div class="confirm-title" id="confirm-title">zeker weten?</div>
+    <div class="confirm-text" id="confirm-text"></div>
+    <div class="confirm-actions">
+      <button class="btn" id="confirm-cancel">annuleren</button>
+      <button class="btn btn-primary" id="confirm-ok">ja</button>
+    </div>
+  </div>
+</div>
+
+<input type="file" id="file-input" accept=".json,application/json" style="display:none">
+
+<script>
+const STORAGE_KEY = 'meal-plan-v1';
+
+const DAYS = [
+  {key:'mon', short:'Ma', long:'Maandag'},
+  {key:'tue', short:'Di', long:'Dinsdag'},
+  {key:'wed', short:'Wo', long:'Woensdag'},
+  {key:'thu', short:'Do', long:'Donderdag'},
+  {key:'fri', short:'Vr', long:'Vrijdag'},
+  {key:'sat', short:'Za', long:'Zaterdag'},
+  {key:'sun', short:'Zo', long:'Zondag'}
+];
+
+const MEALS = [
+  {key:'ontbijt', label:'Ontbijt (+fruit)', short:'Ontbijt'},
+  {key:'wm', label:'WM (+dessert)', short:'WM'},
+  {key:'tussen', label:'Tussendoortje', short:'Tussen'},
+  {key:'brood', label:'Broodmaaltijd', short:'Brood'},
+  {key:'laatje', label:'Laatje', short:'Laatje'},
+  {key:'symptomen', label:'Symptomen', short:'Sympt.'}
+];
+
+const SUGGESTIONS = {
+  ontbijt: ['Yoghurt met granola','Havermout','Boterham met kaas','Croissant','Pannenkoeken','Smoothie','Banaan','Appel','Aardbeien','Eitje','Toast met avocado','Speculoos op brood'],
+  wm: ['Pasta','Soep','Salade','Aardappel met groenten','Rijst met curry','Wrap','Pizza','Quiche','Stoofpotje','IJs','Fruitsalade','Mousse'],
+  tussen: ['Appel','Banaan','Noten','Yoghurt','Wortel','Cracker','Reep','Druiven','Stukje kaas','Komkommer','Smoothie','Koek'],
+  brood: ['Boterham met hesp','Boterham met kaas','Brood met choco','Salade','Soep','Wrap','Tosti','Boterham met humus','Croque','Boterham met avocado','Boterham met paté','Brood met platte kaas'],
+  laatje: ['Stukje chocolade','Cracker','Banaan','Yoghurt','Rijstwafel','Speculoos','Koekje','Glas melk','Thee','Stukje fruit','Noten','Niets'],
+  symptomen: ['Buikpijn','Hoofdpijn','Misselijk','Vermoeidheid','Opgeblazen gevoel','Reflux','Krampen','Hongerig','Voldaan','Goed gevoel','Slecht geslapen','Energie']
+};
+
+let state = {
+  weeks: {},
+  currentWeekKey: getWeekKey(new Date())
+};
+
+function getWeekKey(d) {
+  const date = new Date(d);
+  date.setHours(0,0,0,0);
+  const dayIdx = (date.getDay() + 6) % 7;
+  date.setDate(date.getDate() - dayIdx);
+  const y = date.getFullYear();
+  const m = String(date.getMonth()+1).padStart(2,'0');
+  const day = String(date.getDate()).padStart(2,'0');
+  return `${y}-${m}-${day}`;
+}
+
+function weekDates(weekKey) {
+  const [y,m,d] = weekKey.split('-').map(Number);
+  const monday = new Date(y, m-1, d);
+  return DAYS.map((_,i) => {
+    const dt = new Date(monday);
+    dt.setDate(monday.getDate()+i);
+    return dt;
+  });
+}
+
+function formatWeekRange(weekKey) {
+  const dates = weekDates(weekKey);
+  const start = dates[0], end = dates[6];
+  const sm = start.toLocaleDateString('nl-BE',{month:'short'});
+  const em = end.toLocaleDateString('nl-BE',{month:'short'});
+  if (sm === em) {
+    return `${start.getDate()} - ${end.getDate()} ${em}`;
+  }
+  return `${start.getDate()} ${sm} - ${end.getDate()} ${em}`;
+}
+
+function shiftWeekKey(weekKey, days) {
+  const [y,m,d] = weekKey.split('-').map(Number);
+  const dt = new Date(y, m-1, d);
+  dt.setDate(dt.getDate()+days);
+  return getWeekKey(dt);
+}
+
+function ensureWeek(weekKey) {
+  if (!state.weeks[weekKey]) {
+    state.weeks[weekKey] = {};
+    DAYS.forEach(day => {
+      state.weeks[weekKey][day.key] = {};
+      MEALS.forEach(meal => {
+        state.weeks[weekKey][day.key][meal.key] = [];
+      });
+    });
+  } else {
+    DAYS.forEach(day => {
+      if (!state.weeks[weekKey][day.key]) state.weeks[weekKey][day.key] = {};
+      MEALS.forEach(meal => {
+        if (!Array.isArray(state.weeks[weekKey][day.key][meal.key])) {
+          state.weeks[weekKey][day.key][meal.key] = [];
+        }
+      });
+    });
+  }
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (parsed && typeof parsed === 'object') {
+      state.weeks = parsed.weeks || {};
+      state.currentWeekKey = parsed.currentWeekKey || getWeekKey(new Date());
+    }
+  } catch(e) { console.warn('load failed', e); }
+}
+
+let saveTimer = null;
+function saveState() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      flashSaved();
+    } catch(e) { console.warn('save failed', e); }
+  }, 200);
+}
+
+let savedFlashTimer = null;
+function flashSaved() {
+  const el = document.getElementById('saved-indicator');
+  el.textContent = 'opgeslagen ✓';
+  el.style.opacity = '1';
+  clearTimeout(savedFlashTimer);
+  savedFlashTimer = setTimeout(() => { el.style.opacity = '0'; }, 1200);
+}
+
+let audioCtx = null;
+function getAudio() {
+  if (!audioCtx) {
+    try { audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch(e) { return null; }
+  }
+  if (audioCtx.state === 'suspended') audioCtx.resume();
+  return audioCtx;
+}
+
+function playCheck() {
+  const ctx = getAudio(); if (!ctx) return;
+  [[523,0],[784,0.07]].forEach(([f,t]) => {
+    const o = ctx.createOscillator(), g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'sine'; o.frequency.value = f;
+    const st = ctx.currentTime + t;
+    g.gain.setValueAtTime(0.1, st);
+    g.gain.exponentialRampToValueAtTime(0.001, st + 0.25);
+    o.start(st); o.stop(st + 0.3);
+  });
+}
+
+function playUncheck() {
+  const ctx = getAudio(); if (!ctx) return;
+  const o = ctx.createOscillator(), g = ctx.createGain();
+  o.connect(g); g.connect(ctx.destination);
+  o.type = 'sine'; o.frequency.value = 440;
+  o.frequency.exponentialRampToValueAtTime(330, ctx.currentTime + 0.12);
+  g.gain.setValueAtTime(0.06, ctx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.16);
+  o.start(); o.stop(ctx.currentTime + 0.16);
+}
+
+function escapeHTML(s) {
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+function isToday(date) {
+  const t = new Date();
+  return date.getFullYear() === t.getFullYear()
+    && date.getMonth() === t.getMonth()
+    && date.getDate() === t.getDate();
+}
+
+function todayKey() { return getWeekKey(new Date()); }
+
+function render() {
+  const wk = state.currentWeekKey;
+  ensureWeek(wk);
+  renderWeekLabel();
+  renderGrid();
+  renderMobile();
+}
+
+function renderWeekLabel() {
+  const lbl = document.getElementById('week-label');
+  lbl.textContent = formatWeekRange(state.currentWeekKey);
+  lbl.classList.toggle('current', state.currentWeekKey === todayKey());
+}
+
+function renderGrid() {
+  const grid = document.getElementById('week-grid');
+  const wk = state.currentWeekKey;
+  const dates = weekDates(wk);
+
+  let html = '<div class="col-header first">Dag</div>';
+  MEALS.forEach(m => { html += `<div class="col-header">${escapeHTML(m.label)}</div>`; });
+
+  DAYS.forEach((day, i) => {
+    const date = dates[i];
+    const today = isToday(date);
+    html += `<div class="day-label ${today?'today':''}"><span class="dn">${day.short}</span><span class="dd">${date.getDate()}/${date.getMonth()+1}</span></div>`;
+    MEALS.forEach(meal => {
+      const items = state.weeks[wk][day.key][meal.key];
+      const isSymp = meal.key === 'symptomen';
+      const cls = `meal-cell ${items.length===0?'empty-cell':'has-items'} ${isSymp?'symptom-cell':''}`;
+      html += `<div class="${cls}" data-day="${day.key}" data-meal="${meal.key}">`;
+      if (items.length === 0) {
+        html += `<div class="add-hint">+</div>`;
+      } else {
+        items.slice(0, 4).forEach((it, idx) => {
+          html += `<div class="meal-item ${it.checked?'checked':''}"><span class="dot"></span><span class="it">${escapeHTML(it.text)}</span></div>`;
+        });
+        if (items.length > 4) {
+          html += `<div class="meal-item"><span class="it" style="color:var(--pu4);font-size:10.5px">+ ${items.length - 4} meer</span></div>`;
+        }
+      }
+      html += '</div>';
+    });
+  });
+
+  grid.innerHTML = html;
+}
+
+function renderMobile() {
+  const view = document.getElementById('mobile-view');
+  const wk = state.currentWeekKey;
+  const dates = weekDates(wk);
+
+  let html = '';
+  DAYS.forEach((day, i) => {
+    const date = dates[i];
+    const today = isToday(date);
+    html += `<div class="mobile-day ${today?'today':''}">`;
+    html += `<div class="mobile-day-head"><span>${day.long}</span><span class="date">${date.getDate()}/${date.getMonth()+1}</span></div>`;
+    html += `<div class="mobile-meals">`;
+    MEALS.forEach(meal => {
+      const items = state.weeks[wk][day.key][meal.key];
+      const isSymp = meal.key === 'symptomen';
+      const cls = `mobile-meal ${items.length===0?'empty':''} ${isSymp?'symptoms':''}`;
+      html += `<div class="${cls}" data-day="${day.key}" data-meal="${meal.key}">`;
+      html += `<div class="mobile-meal-label">${escapeHTML(meal.short)}</div>`;
+      html += `<div class="mobile-meal-items">`;
+      if (items.length === 0) {
+        html += `<div style="color:var(--pu3);font-style:italic;">tik om toe te voegen</div>`;
+      } else {
+        items.forEach(it => {
+          html += `<div class="mobile-meal-item ${it.checked?'checked':''}"><span class="dot"></span><span class="it">${escapeHTML(it.text)}</span></div>`;
+        });
+      }
+      html += `</div></div>`;
+    });
+    html += `</div></div>`;
+  });
+
+  view.innerHTML = html;
+}
+
+let openCell = null;
+
+function openModal(dayKey, mealKey) {
+  openCell = { dayKey, mealKey };
+  const day = DAYS.find(d => d.key === dayKey);
+  const meal = MEALS.find(m => m.key === mealKey);
+  const dates = weekDates(state.currentWeekKey);
+  const dayIdx = DAYS.findIndex(d => d.key === dayKey);
+  const dt = dates[dayIdx];
+
+  document.getElementById('modal-day-label').textContent =
+    `${day.long.toLowerCase()} · ${dt.getDate()}/${dt.getMonth()+1}`;
+  document.getElementById('modal-title').textContent = meal.label;
+  document.getElementById('modal-input').placeholder = `${meal.short} toevoegen...`;
+  renderModalItems();
+  renderSuggestions();
+  document.getElementById('modal').classList.add('show');
+  setTimeout(() => document.getElementById('modal-input').focus(), 250);
+}
+
+function renderModalItems() {
+  if (!openCell) return;
+  const items = state.weeks[state.currentWeekKey][openCell.dayKey][openCell.mealKey];
+  const cont = document.getElementById('modal-items');
+  if (items.length === 0) {
+    cont.innerHTML = '<div class="modal-empty">nog niets · voeg iets toe hieronder</div>';
+    return;
+  }
+  cont.innerHTML = items.map((it, i) =>
+    `<div class="modal-item ${it.checked?'checked':''}">
+      <button class="modal-check" data-mcheck="${i}" aria-label="${it.checked?'uncheck':'check'}"></button>
+      <span class="modal-item-text">${escapeHTML(it.text)}</span>
+      <button class="modal-del" data-mdel="${i}" aria-label="remove">&#x2715;</button>
+    </div>`
+  ).join('');
+}
+
+function renderSuggestions() {
+  if (!openCell) return;
+  const items = state.weeks[state.currentWeekKey][openCell.dayKey][openCell.mealKey];
+  const existing = new Set(items.map(it => it.text.toLowerCase()));
+  const suggs = (SUGGESTIONS[openCell.mealKey] || [])
+    .filter(s => !existing.has(s.toLowerCase()))
+    .slice(0, 8);
+  const cont = document.getElementById('modal-suggestions');
+  if (suggs.length === 0) {
+    cont.innerHTML = '';
+    return;
+  }
+  cont.innerHTML = `<div class="modal-suggestions-label">snelle keuzes</div>
+    <div class="suggestion-chips">
+      ${suggs.map(s => `<button class="chip" data-sugg="${escapeHTML(s)}">${escapeHTML(s)}</button>`).join('')}
+    </div>`;
+}
+
+function closeModal() {
+  document.getElementById('modal').classList.remove('show');
+  openCell = null;
+}
+
+function addItemFromInput() {
+  if (!openCell) return;
+  const inp = document.getElementById('modal-input');
+  const v = inp.value.trim();
+  if (!v) return;
+  addItem(openCell.dayKey, openCell.mealKey, v);
+  inp.value = '';
+  inp.focus();
+}
+
+function addItem(dayKey, mealKey, text) {
+  const items = state.weeks[state.currentWeekKey][dayKey][mealKey];
+  if (items.some(x => x.text.toLowerCase() === text.toLowerCase())) return;
+  items.push({ text, checked: false });
+  renderModalItems();
+  renderSuggestions();
+  render();
+  saveState();
+}
+
+function toggleItem(dayKey, mealKey, idx) {
+  const items = state.weeks[state.currentWeekKey][dayKey][mealKey];
+  if (!items[idx]) return;
+  items[idx].checked = !items[idx].checked;
+  if (items[idx].checked) playCheck(); else playUncheck();
+  renderModalItems();
+  render();
+  saveState();
+}
+
+function deleteItem(dayKey, mealKey, idx) {
+  const items = state.weeks[state.currentWeekKey][dayKey][mealKey];
+  items.splice(idx, 1);
+  renderModalItems();
+  renderSuggestions();
+  render();
+  saveState();
+}
+
+function showConfirm(title, text, onOk) {
+  document.getElementById('confirm-title').textContent = title;
+  document.getElementById('confirm-text').textContent = text;
+  document.getElementById('confirm-modal').classList.add('show');
+  const ok = document.getElementById('confirm-ok');
+  const cancel = document.getElementById('confirm-cancel');
+  const close = () => document.getElementById('confirm-modal').classList.remove('show');
+  const okHandler = () => { close(); onOk(); ok.removeEventListener('click', okHandler); cancel.removeEventListener('click', cancelHandler); };
+  const cancelHandler = () => { close(); ok.removeEventListener('click', okHandler); cancel.removeEventListener('click', cancelHandler); };
+  ok.addEventListener('click', okHandler);
+  cancel.addEventListener('click', cancelHandler);
+}
+
+function clearWeek() {
+  showConfirm('deze week leegmaken?', 'alle maaltijden en symptomen van deze week worden gewist.', () => {
+    delete state.weeks[state.currentWeekKey];
+    ensureWeek(state.currentWeekKey);
+    render();
+    saveState();
+  });
+}
+
+function copyPrevWeek() {
+  const prev = shiftWeekKey(state.currentWeekKey, -7);
+  if (!state.weeks[prev]) {
+    alert('vorige week is leeg.');
+    return;
+  }
+  showConfirm('vorige week kopieren?', 'alles van vorige week komt in deze week (vinkjes worden gereset).', () => {
+    ensureWeek(state.currentWeekKey);
+    DAYS.forEach(day => {
+      MEALS.forEach(meal => {
+        const src = state.weeks[prev][day.key] && state.weeks[prev][day.key][meal.key];
+        if (Array.isArray(src)) {
+          state.weeks[state.currentWeekKey][day.key][meal.key] = src.map(it => ({ text: it.text, checked: false }));
+        }
+      });
+    });
+    render();
+    saveState();
+  });
+}
+
+function exportBackup() {
+  const data = JSON.stringify(state, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  const date = new Date().toISOString().slice(0, 10);
+  a.href = url;
+  a.download = `meal-plan-backup-${date}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+}
+
+function importBackup() {
+  document.getElementById('file-input').click();
+}
+
+function handleImportFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const parsed = JSON.parse(ev.target.result);
+      if (!parsed || !parsed.weeks) {
+        alert('Geen geldig backup-bestand.');
+        return;
+      }
+      showConfirm('data overschrijven?', 'alle huidige data wordt vervangen door de backup.', () => {
+        state.weeks = parsed.weeks || {};
+        if (parsed.currentWeekKey) state.currentWeekKey = parsed.currentWeekKey;
+        render();
+        saveState();
+      });
+    } catch (err) { alert('Kan dit bestand niet lezen.'); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+function resetEverything() {
+  showConfirm('alles wissen?', 'alle weken, maaltijden en symptomen worden definitief gewist. eerst exporteren als je iets wil bewaren!', () => {
+    state.weeks = {};
+    state.currentWeekKey = todayKey();
+    ensureWeek(state.currentWeekKey);
+    render();
+    saveState();
+  });
+}
+
+document.addEventListener('click', e => {
+  const cell = e.target.closest('[data-day][data-meal]');
+  if (cell) {
+    openModal(cell.dataset.day, cell.dataset.meal);
+    return;
+  }
+  const t = e.target.closest('[data-mcheck],[data-mdel],[data-sugg]');
+  if (!t || !openCell) return;
+  if (t.dataset.mcheck !== undefined) {
+    toggleItem(openCell.dayKey, openCell.mealKey, parseInt(t.dataset.mcheck, 10));
+  } else if (t.dataset.mdel !== undefined) {
+    deleteItem(openCell.dayKey, openCell.mealKey, parseInt(t.dataset.mdel, 10));
+  } else if (t.dataset.sugg) {
+    addItem(openCell.dayKey, openCell.mealKey, t.dataset.sugg);
+  }
+});
+
+document.getElementById('prev-week').addEventListener('click', () => {
+  state.currentWeekKey = shiftWeekKey(state.currentWeekKey, -7);
+  render();
+  saveState();
+});
+
+document.getElementById('next-week').addEventListener('click', () => {
+  state.currentWeekKey = shiftWeekKey(state.currentWeekKey, 7);
+  render();
+  saveState();
+});
+
+document.getElementById('today-btn').addEventListener('click', () => {
+  state.currentWeekKey = todayKey();
+  render();
+  saveState();
+});
+
+document.getElementById('clear-week-btn').addEventListener('click', clearWeek);
+document.getElementById('copy-prev-btn').addEventListener('click', copyPrevWeek);
+
+document.getElementById('modal-add-btn').addEventListener('click', addItemFromInput);
+document.getElementById('modal-input').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addItemFromInput();
+});
+document.getElementById('modal-close').addEventListener('click', closeModal);
+
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target.id === 'modal') closeModal();
+});
+
+document.getElementById('export-btn').addEventListener('click', exportBackup);
+document.getElementById('import-btn').addEventListener('click', importBackup);
+document.getElementById('file-input').addEventListener('change', handleImportFile);
+document.getElementById('reset-all-btn').addEventListener('click', resetEverything);
+
+try { loadState(); } catch(e) { console.warn(e); }
+ensureWeek(state.currentWeekKey);
+try { render(); } catch(e) { console.warn(e); }
+</script>
+</body>
+</html>

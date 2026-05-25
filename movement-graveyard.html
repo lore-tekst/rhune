@@ -56,6 +56,7 @@
   .header{
     text-align:center;
     margin-bottom:1.25rem;
+    position:relative;
   }
 
   .app-title{
@@ -78,6 +79,224 @@
     height:14px;
     transition:opacity 0.3s;
     margin-bottom:0.25rem;
+  }
+
+  .sync-status{
+    font-size:11px;
+    height:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    margin-bottom:0.5rem;
+    transition:opacity 0.3s;
+  }
+  .sync-status.syncing{color:var(--pu4);}
+  .sync-status.synced{color:#7FBE91;}
+  .sync-status.failed{color:#D89A9A;cursor:pointer;}
+  .sync-status.failed:hover{text-decoration:underline;}
+  .sync-status.disabled{color:var(--pu3);font-style:italic;}
+  .sync-dot{
+    width:6px;height:6px;border-radius:50%;
+    background:currentColor;
+    display:inline-block;
+  }
+  .sync-status.syncing .sync-dot{
+    animation:sync-pulse 1.1s ease-in-out infinite;
+  }
+  @keyframes sync-pulse{
+    0%,100%{opacity:0.3;}
+    50%{opacity:1;}
+  }
+
+  .settings-btn{
+    position:absolute;
+    top:0;right:0;
+    background:transparent;
+    border:none;
+    color:var(--pu4);
+    font-size:20px;
+    cursor:pointer;
+    padding:6px 10px;
+    border-radius:8px;
+    transition:all 0.14s;
+    line-height:1;
+    z-index:5;
+  }
+  .settings-btn:hover{
+    background:var(--pu1);
+    color:var(--pu6);
+  }
+
+  .settings-modal-bg{
+    position:fixed;
+    inset:0;
+    background:rgba(38,33,92,0.5);
+    backdrop-filter:blur(6px);
+    -webkit-backdrop-filter:blur(6px);
+    z-index:250;
+    display:none;
+    align-items:flex-start;
+    justify-content:center;
+    padding:40px 16px;
+    overflow-y:auto;
+  }
+  .settings-modal-bg.show{display:flex;}
+
+  .settings-modal{
+    background:#fff;
+    border-radius:18px;
+    padding:24px 22px;
+    max-width:440px;
+    width:100%;
+    border:2px solid var(--pu3);
+    box-shadow:0 10px 40px rgba(38,33,92,0.4);
+  }
+  .settings-modal h2{
+    font-family:var(--font-serif);
+    font-size:22px;
+    color:var(--pu7);
+    margin-bottom:6px;
+  }
+  .settings-modal .settings-sub{
+    color:var(--pu5);
+    font-size:13px;
+    font-style:italic;
+    margin-bottom:18px;
+    line-height:1.45;
+  }
+  .settings-field{
+    margin-bottom:14px;
+  }
+  .settings-field label{
+    display:block;
+    font-size:12px;
+    font-weight:500;
+    color:var(--pu6);
+    margin-bottom:5px;
+    letter-spacing:0.3px;
+  }
+  .settings-field input[type="text"], .settings-field input[type="password"]{
+    width:100%;
+    padding:9px 11px;
+    border-radius:9px;
+    border:1.5px solid var(--pu3);
+    font-family:inherit;
+    font-size:13px;
+    background:#fff;
+    color:var(--text);
+    outline:none;
+    -webkit-appearance:none;
+    transition:border-color 0.14s;
+  }
+  .settings-field input:focus{border-color:var(--pu5);}
+  .settings-field .hint{
+    font-size:11px;
+    color:var(--pu4);
+    margin-top:4px;
+    line-height:1.4;
+    font-style:italic;
+  }
+  .settings-toggle{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:var(--pu1);
+    padding:10px 12px;
+    border-radius:10px;
+    margin-bottom:14px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .settings-toggle input{
+    width:18px;height:18px;
+    accent-color:var(--pu5);
+    cursor:pointer;
+  }
+  .settings-toggle .toggle-label{
+    flex:1;font-size:13px;color:var(--pu7);font-weight:500;
+  }
+  .settings-toggle .toggle-sub{
+    font-size:11px;color:var(--pu5);font-style:italic;display:block;margin-top:2px;font-weight:400;
+  }
+  .settings-actions{
+    display:flex;gap:8px;
+    margin-top:18px;
+    flex-wrap:wrap;
+  }
+  .settings-btn-primary, .settings-btn-secondary{
+    flex:1;
+    padding:10px 14px;
+    border-radius:99px;
+    font-family:inherit;
+    font-size:13px;
+    font-weight:500;
+    cursor:pointer;
+    transition:all 0.14s;
+    border:1.5px solid;
+    min-width:120px;
+  }
+  .settings-btn-primary{
+    background:var(--pu5);color:#fff;border-color:var(--pu5);
+  }
+  .settings-btn-primary:hover{background:var(--pu6);}
+  .settings-btn-secondary{
+    background:#fff;color:var(--pu6);border-color:var(--pu3);
+  }
+  .settings-btn-secondary:hover{background:var(--pu1);}
+  .settings-btn-test{
+    background:#fff;color:var(--pu6);border-color:var(--pu3);
+    padding:8px 12px;
+    border-radius:99px;
+    border:1.5px solid var(--pu3);
+    font-family:inherit;
+    font-size:12px;
+    cursor:pointer;
+    margin-top:8px;
+  }
+  .settings-btn-test:hover{background:var(--pu1);}
+  .settings-test-result{
+    font-size:12px;
+    margin-top:8px;
+    padding:8px 10px;
+    border-radius:8px;
+    line-height:1.45;
+    display:none;
+  }
+  .settings-test-result.show{display:block;}
+  .settings-test-result.success{
+    background:#E8F5EE;
+    color:#2D6E45;
+    border:1px solid #7FBE91;
+  }
+  .settings-test-result.error{
+    background:#FCEBEB;
+    color:#A32D2D;
+    border:1px solid #D89A9A;
+  }
+  .settings-url-box{
+    background:var(--pu1);
+    padding:10px 12px;
+    border-radius:9px;
+    border:1px solid var(--pu2);
+    font-family:ui-monospace,Menlo,Consolas,monospace;
+    font-size:11px;
+    color:var(--pu7);
+    word-break:break-all;
+    margin-top:6px;
+  }
+  .settings-divider{
+    height:1px;background:var(--pu2);margin:18px 0;
+  }
+  .settings-warning{
+    background:#FFF3E0;
+    border:1px solid #FFD89F;
+    color:#8A5A0B;
+    padding:10px 12px;
+    border-radius:9px;
+    font-size:12px;
+    line-height:1.5;
+    margin-bottom:14px;
   }
 
   .week-bar{
@@ -776,9 +995,11 @@
 
 <div class="wrap">
   <div class="header">
+    <button class="settings-btn" id="settings-btn" aria-label="instellingen" title="instellingen">⚙</button>
     <div class="app-title">Mijn Bewegingskerkhof</div>
     <div class="app-sub">Elke beweging is een graf erbij</div>
     <div class="saved-indicator" id="saved-indicator">&nbsp;</div>
+    <div class="sync-status disabled" id="sync-status"><span class="sync-dot"></span><span id="sync-status-text">delen met team niet ingesteld</span></div>
   </div>
 
   <div class="week-bar">
@@ -887,10 +1108,57 @@
   </div>
 </div>
 
+<div class="settings-modal-bg" id="settings-modal-bg">
+  <div class="settings-modal">
+    <h2>Delen met clinical team</h2>
+    <div class="settings-sub">elke wijziging wordt automatisch gesynchroniseerd naar een privé link voor je behandelaars. zij zien altijd jouw laatste versie.</div>
+
+    <div class="settings-warning">
+      🔒 zet de token enkel op je eigen toestel. niet doorsturen, niet screenshoten. de token geeft toegang om dit kerkhof te updaten.
+    </div>
+
+    <div class="settings-field">
+      <label for="settings-token">GitHub token</label>
+      <input type="password" id="settings-token" placeholder="ghp_..." autocomplete="off" spellcheck="false">
+      <div class="hint">een token met enkel 'gist' rechten. wordt enkel op dit toestel opgeslagen.</div>
+    </div>
+
+    <div class="settings-field">
+      <label for="settings-gist-id">Gist ID</label>
+      <input type="text" id="settings-gist-id" placeholder="bv. 7c4f3a2b1e0d..." autocomplete="off" spellcheck="false">
+      <div class="hint">het laatste deel van de gist URL.</div>
+    </div>
+
+    <div class="settings-toggle">
+      <input type="checkbox" id="settings-sync-toggle">
+      <span class="toggle-label">automatisch synchroniseren
+        <span class="toggle-sub">elke keer je iets toevoegt of wijzigt</span>
+      </span>
+    </div>
+
+    <button class="settings-btn-test" id="settings-test-btn">verbinding testen</button>
+    <div class="settings-test-result" id="settings-test-result"></div>
+
+    <div class="settings-divider"></div>
+
+    <div class="settings-field">
+      <label>link voor het behandelteam</label>
+      <div class="settings-url-box" id="settings-team-url">vul eerst het gist ID in</div>
+      <div class="hint">deel deze link enkel met je behandelteam. iedereen met deze link kan je gegevens lezen.</div>
+    </div>
+
+    <div class="settings-actions">
+      <button class="settings-btn-secondary" id="settings-cancel-btn">Annuleren</button>
+      <button class="settings-btn-primary" id="settings-save-btn">Opslaan</button>
+    </div>
+  </div>
+</div>
+
 <input type="file" id="file-input" accept=".json,application/json" style="display:none">
 
 <script>
 const STORAGE_KEY = 'movement-garden-v1';
+const SETTINGS_KEY = 'movement-graveyard-share-v1';
 
 const DAYS = [
   {key:'mon', short:'Ma', long:'Maandag'},
@@ -931,6 +1199,10 @@ let state = {
   weeks: {},
   currentWeekKey: getWeekKey(new Date())
 };
+
+let syncSettings = { token:'', gistId:'', enabled:false };
+let syncTimer = null;
+let lastSyncedHTML = null;
 
 function getWeekKey(d) {
   const date = new Date(d);
@@ -1006,6 +1278,7 @@ function saveState() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       flashSaved();
+      scheduleSyncToGist();
     } catch(e) { console.warn('Save failed', e); }
   }, 200);
 }
@@ -1017,6 +1290,251 @@ function flashSaved() {
   el.style.opacity = '1';
   clearTimeout(savedFlashTimer);
   savedFlashTimer = setTimeout(() => { el.style.opacity = '0'; }, 1200);
+}
+
+function loadSyncSettings() {
+  try {
+    const raw = localStorage.getItem(SETTINGS_KEY);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      syncSettings.token = parsed.token || '';
+      syncSettings.gistId = parsed.gistId || '';
+      syncSettings.enabled = !!parsed.enabled;
+    }
+  } catch(e) { console.warn('settings load failed', e); }
+  updateSyncStatusUI();
+}
+
+function saveSyncSettings() {
+  try {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(syncSettings));
+  } catch(e) { console.warn('settings save failed', e); }
+}
+
+function syncIsConfigured() {
+  return syncSettings.token && syncSettings.gistId && syncSettings.enabled;
+}
+
+function updateSyncStatusUI(stateKey, customText) {
+  const el = document.getElementById('sync-status');
+  const txt = document.getElementById('sync-status-text');
+  if (!el) return;
+  el.classList.remove('syncing','synced','failed','disabled');
+  if (!syncIsConfigured()) {
+    el.classList.add('disabled');
+    txt.textContent = 'delen met team niet ingesteld';
+    return;
+  }
+  if (stateKey === 'syncing') { el.classList.add('syncing'); txt.textContent = customText || 'synchroniseren...'; }
+  else if (stateKey === 'synced') { el.classList.add('synced'); txt.textContent = customText || 'team-link bijgewerkt ✓'; }
+  else if (stateKey === 'failed') { el.classList.add('failed'); txt.textContent = customText || 'synchronisatie mislukt — tik om opnieuw'; }
+  else { el.classList.add('synced'); txt.textContent = 'klaar om te delen'; }
+}
+
+function scheduleSyncToGist() {
+  if (!syncIsConfigured()) return;
+  clearTimeout(syncTimer);
+  syncTimer = setTimeout(() => { syncToGist(); }, 1500);
+}
+
+async function syncToGist(opts) {
+  opts = opts || {};
+  if (!syncIsConfigured() && !opts.testMode) return;
+  const useToken = opts.token || syncSettings.token;
+  const useGistId = opts.gistId || syncSettings.gistId;
+  if (!useToken || !useGistId) return;
+
+  const html = buildSharedHTML();
+  if (!opts.testMode && lastSyncedHTML === html) return;
+
+  if (!opts.testMode) updateSyncStatusUI('syncing');
+
+  try {
+    const resp = await fetch(`https://api.github.com/gists/${useGistId}`, {
+      method: 'PATCH',
+      headers: {
+        'Accept': 'application/vnd.github+json',
+        'Authorization': `Bearer ${useToken}`,
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        files: { 'kerkhof.html': { content: html } }
+      })
+    });
+    if (!resp.ok) {
+      const errText = await resp.text().catch(()=>'');
+      const msg = resp.status === 401 ? 'token werkt niet' :
+                  resp.status === 404 ? 'gist niet gevonden' :
+                  `fout ${resp.status}`;
+      if (!opts.testMode) updateSyncStatusUI('failed', msg + ' — tik om opnieuw');
+      return { ok: false, status: resp.status, message: msg, body: errText };
+    }
+    const data = await resp.json().catch(()=>({}));
+    if (!opts.testMode) {
+      lastSyncedHTML = html;
+      updateSyncStatusUI('synced');
+    }
+    return { ok: true, htmlUrl: data.html_url || null };
+  } catch (e) {
+    if (!opts.testMode) updateSyncStatusUI('failed', 'geen internet? — tik om opnieuw');
+    return { ok: false, message: 'netwerk: ' + (e.message || 'onbekend') };
+  }
+}
+
+function buildSharedHTML() {
+  const now = new Date();
+  const ts = `${now.getDate()}/${now.getMonth()+1}/${now.getFullYear()} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+
+  let weeksHTML = '';
+  const allWeekKeys = Object.keys(state.weeks).sort().reverse();
+  if (allWeekKeys.length === 0) {
+    weeksHTML = `<div class="empty-note">nog geen bewegingen geregistreerd</div>`;
+  } else {
+    allWeekKeys.forEach(wk => {
+      const dates = weekDates(wk);
+      const rangeLabel = `${dates[0].getDate()}/${dates[0].getMonth()+1} – ${dates[6].getDate()}/${dates[6].getMonth()+1}/${dates[6].getFullYear()}`;
+      const weekData = state.weeks[wk];
+      let weekHasEntries = false;
+      let rowsHTML = '';
+      DAYS.forEach((day, i) => {
+        const dt = dates[i];
+        const entries = (weekData[day.key] || []);
+        if (entries.length > 0) weekHasEntries = true;
+        let cellsHTML = '';
+        if (entries.length === 0) {
+          cellsHTML = `<td class="empty-cell">—</td>`;
+        } else {
+          let lines = entries.map(e => {
+            const t = ACTIVITY_TYPES[e.typeKey] || ACTIVITY_TYPES.other;
+            const dur = durationLabel(e.durationKey);
+            const feel = FEELINGS.find(f => f.key === e.feelingKey);
+            const feelStr = feel ? ` <span class="feel">${feel.emoji} ${feel.label}</span>` : '';
+            const durStr = dur ? ` <span class="dur">(${escapeHTML(dur)})</span>` : '';
+            const noteStr = e.note ? `<div class="note">${escapeHTML(e.note)}</div>` : '';
+            return `<div class="entry"><span class="ico">${t.icon}</span> ${escapeHTML(e.what)}${durStr}${feelStr}${noteStr}</div>`;
+          }).join('');
+          cellsHTML = `<td class="entries-cell">${lines}</td>`;
+        }
+        rowsHTML += `<tr><td class="day-h"><div class="dn">${day.short}</div><div class="dd">${dt.getDate()}/${dt.getMonth()+1}</div></td>${cellsHTML}</tr>`;
+      });
+      if (weekHasEntries) {
+        weeksHTML += `<div class="week-block">
+          <h2>week van ${rangeLabel}</h2>
+          <table>${rowsHTML}</table>
+        </div>`;
+      }
+    });
+    if (!weeksHTML) weeksHTML = `<div class="empty-note">nog geen bewegingen geregistreerd</div>`;
+  }
+
+  return `<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Bewegingskerkhof — overzicht voor behandelteam</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Helvetica Neue',Arial,sans-serif;color:#26215C;background:#F4F0FE;padding:24px 18px;line-height:1.5;}
+  .page{max-width:900px;margin:0 auto;background:#fff;border-radius:18px;padding:28px 24px;box-shadow:0 4px 24px rgba(113,101,214,0.08);}
+  h1{font-family:'Cormorant Garamond','Hoefler Text',Georgia,serif;font-size:30px;color:#3A3285;text-align:center;margin-bottom:4px;}
+  .sub{text-align:center;color:#7165D6;font-style:italic;font-size:14px;margin-bottom:6px;}
+  .ts{text-align:center;color:#9B91E8;font-size:11.5px;margin-bottom:18px;}
+  .legend{background:#F2EFFE;border:1px solid #E2DEFB;padding:10px 14px;border-radius:11px;font-size:12px;color:#534AB7;margin-bottom:20px;line-height:1.65;}
+  .legend strong{color:#3A3285;}
+  .empty-note{text-align:center;color:#9B91E8;font-style:italic;padding:32px 12px;}
+  .week-block{margin-bottom:22px;}
+  h2{font-family:'Cormorant Garamond','Hoefler Text',Georgia,serif;font-size:18px;color:#3A3285;border-bottom:1.5px solid #C8C1F5;padding-bottom:5px;margin-bottom:8px;font-weight:600;}
+  table{width:100%;border-collapse:separate;border-spacing:0 4px;table-layout:fixed;}
+  td{vertical-align:top;padding:8px 10px;background:#FBFAFE;font-size:12.5px;border-radius:7px;}
+  td.day-h{background:#7165D6;color:#fff;text-align:center;width:62px;border-radius:7px 0 0 7px;font-family:'Cormorant Garamond','Hoefler Text',Georgia,serif;font-weight:600;padding:9px 4px;}
+  td.day-h .dn{font-size:13px;}
+  td.day-h .dd{font-size:10px;opacity:0.85;margin-top:1px;}
+  td.entries-cell{border-radius:0 7px 7px 0;}
+  td.empty-cell{color:#C8C1F5;font-style:italic;text-align:center;border-radius:0 7px 7px 0;}
+  .entry{padding:3px 0;color:#26215C;}
+  .entry .ico{margin-right:4px;}
+  .entry .dur{color:#9B91E8;font-size:11px;}
+  .entry .feel{color:#7165D6;}
+  .entry .note{margin:3px 0 4px 22px;padding:4px 9px;background:#F2EFFE;border-left:2.5px solid #C8C1F5;border-radius:0 6px 6px 0;font-size:11px;color:#3A3285;font-style:italic;line-height:1.45;}
+  .footer{margin-top:24px;padding-top:14px;border-top:1px solid #E2DEFB;font-size:10.5px;color:#9B91E8;text-align:center;line-height:1.5;}
+  @media print{body{background:#fff;padding:8px;}.page{box-shadow:none;}}
+</style>
+</head>
+<body>
+  <div class="page">
+    <h1>Bewegingskerkhof</h1>
+    <div class="sub">overzicht voor het behandelteam</div>
+    <div class="ts">laatst bijgewerkt: ${ts}</div>
+    <div class="legend">
+      <strong>Over deze pagina:</strong> elke geregistreerde beweging wordt hier automatisch bijgewerkt. duur en gevoel zijn zoals door de gebruiker gerapporteerd.<br>
+      <strong>Gevoel:</strong> 💜 fijn · 🌿 oké · 🥀 zwaar
+    </div>
+    ${weeksHTML}
+    <div class="footer">
+      Automatisch gegenereerd vanuit bewegingskerkhof · deze pagina toont steeds de meest recente versie
+    </div>
+  </div>
+</body>
+</html>`;
+}
+
+function openSettings() {
+  document.getElementById('settings-token').value = syncSettings.token || '';
+  document.getElementById('settings-gist-id').value = syncSettings.gistId || '';
+  document.getElementById('settings-sync-toggle').checked = !!syncSettings.enabled;
+  updateTeamUrlBox();
+  document.getElementById('settings-test-result').className = 'settings-test-result';
+  document.getElementById('settings-modal-bg').classList.add('show');
+}
+
+function closeSettings() {
+  document.getElementById('settings-modal-bg').classList.remove('show');
+}
+
+function updateTeamUrlBox() {
+  const gistId = document.getElementById('settings-gist-id').value.trim();
+  const box = document.getElementById('settings-team-url');
+  if (gistId) {
+    box.textContent = `https://gist.github.com/${gistId}`;
+  } else {
+    box.textContent = 'vul eerst het gist ID in';
+  }
+}
+
+async function testSyncSettings() {
+  const token = document.getElementById('settings-token').value.trim();
+  const gistId = document.getElementById('settings-gist-id').value.trim();
+  const resultBox = document.getElementById('settings-test-result');
+  resultBox.className = 'settings-test-result show';
+  if (!token || !gistId) {
+    resultBox.classList.add('error');
+    resultBox.textContent = 'vul beide velden in om te testen';
+    return;
+  }
+  resultBox.textContent = 'testen...';
+  resultBox.classList.remove('success','error');
+  const result = await syncToGist({ token, gistId, testMode:true });
+  resultBox.className = 'settings-test-result show';
+  if (result && result.ok) {
+    resultBox.classList.add('success');
+    resultBox.textContent = '✓ werkt! het team kan deze link nu zien.';
+  } else {
+    resultBox.classList.add('error');
+    resultBox.textContent = '✗ ' + (result && result.message ? result.message : 'mislukt') + '. controleer token en gist ID.';
+  }
+}
+
+function saveSettingsFromModal() {
+  syncSettings.token = document.getElementById('settings-token').value.trim();
+  syncSettings.gistId = document.getElementById('settings-gist-id').value.trim();
+  syncSettings.enabled = document.getElementById('settings-sync-toggle').checked;
+  saveSyncSettings();
+  updateSyncStatusUI();
+  closeSettings();
+  if (syncIsConfigured()) {
+    syncToGist();
+  }
 }
 
 let audioCtx = null;
@@ -1460,9 +1978,25 @@ document.getElementById('import-btn').addEventListener('click', importBackup);
 document.getElementById('file-input').addEventListener('change', handleImportFile);
 document.getElementById('reset-all-btn').addEventListener('click', resetEverything);
 
+document.getElementById('settings-btn').addEventListener('click', openSettings);
+document.getElementById('settings-cancel-btn').addEventListener('click', closeSettings);
+document.getElementById('settings-save-btn').addEventListener('click', saveSettingsFromModal);
+document.getElementById('settings-test-btn').addEventListener('click', testSyncSettings);
+document.getElementById('settings-gist-id').addEventListener('input', updateTeamUrlBox);
+document.getElementById('settings-modal-bg').addEventListener('click', e => {
+  if (e.target.id === 'settings-modal-bg') closeSettings();
+});
+document.getElementById('sync-status').addEventListener('click', () => {
+  if (document.getElementById('sync-status').classList.contains('failed')) {
+    updateSyncStatusUI('syncing');
+    syncToGist();
+  }
+});
+
 try { loadState(); } catch(e) { console.warn(e); }
 ensureWeek(state.currentWeekKey);
 try { render(); } catch(e) { console.warn(e); }
+try { loadSyncSettings(); } catch(e) { console.warn(e); }
 </script>
 </body>
 </html>

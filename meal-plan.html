@@ -130,7 +130,7 @@
 
   .week-grid{
     display:grid;
-    grid-template-columns:90px repeat(6,1fr);
+    grid-template-columns:76px repeat(var(--cols,6),1fr);
     gap:6px;
     background:var(--pu2);
     padding:6px;
@@ -970,7 +970,13 @@ const DAYS = [
   {key:'sun', short:'Zo', long:'Zondag'}
 ];
 
-const MEALS = [
+/* --- Twee kolomschema's -------------------------------------------------
+   'meals'  = het oude schema (weken van vóór de overstap blijven zo staan)
+   'blocks' = tijdsblokken (alle nieuwe weken)
+   'symptomen' houdt dezelfde key in beide schema's, zodat die data
+   altijd mee overleeft.
+------------------------------------------------------------------------ */
+const MEALS_LEGACY = [
   {key:'ontbijt', label:'Ontbijt (+fruit)', short:'Ontbijt'},
   {key:'wm', label:'WM (+dessert)', short:'WM'},
   {key:'tussen', label:'Tussendoortje', short:'Tussen'},
@@ -978,6 +984,52 @@ const MEALS = [
   {key:'laatje', label:'Laatje', short:'Laatje'},
   {key:'symptomen', label:'Symptomen', short:'Sympt.'}
 ];
+
+const MEALS_BLOCKS = [
+  {key:'b0810', label:'8-10u',  short:'8-10u'},
+  {key:'b1012', label:'10-12u', short:'10-12u'},
+  {key:'b1214', label:'12-14u', short:'12-14u'},
+  {key:'b1416', label:'14-16u', short:'14-16u'},
+  {key:'b1618', label:'16-18u', short:'16-18u'},
+  {key:'b1820', label:'18-20u', short:'18-20u'},
+  {key:'b2022', label:'20-22u', short:'20-22u'},
+  {key:'symptomen', label:'Symptomen', short:'Sympt.'}
+];
+
+const LEGACY_MEAL_KEYS = ['ontbijt','wm','tussen','brood','laatje'];
+
+/* Bepaalt het schema van een week. Eenmaal vastgelegd verandert het niet
+   meer, zodat oude weken blijven zoals ze waren. */
+function schemaFor(weekKey) {
+  if (!state.weekSchema) state.weekSchema = {};
+  if (state.weekSchema[weekKey]) return state.weekSchema[weekKey];
+
+  let schema = 'blocks';
+  const wk = state.weeks && state.weeks[weekKey];
+  if (wk) {
+    // Bestaat er al inhoud onder de oude maaltijd-keys? Dan is het een oude week.
+    outer:
+    for (const day of DAYS) {
+      const d = wk[day.key];
+      if (!d) continue;
+      for (const k of LEGACY_MEAL_KEYS) {
+        if (Array.isArray(d[k]) && d[k].length > 0) { schema = 'meals'; break outer; }
+      }
+    }
+  }
+  state.weekSchema[weekKey] = schema;
+  return schema;
+}
+
+function colsFor(weekKey) {
+  return schemaFor(weekKey) === 'meals' ? MEALS_LEGACY : MEALS_BLOCKS;
+}
+
+/* Alle bestaande code werkt op de week die in beeld staat, dus MEALS
+   verwijst automatisch naar de juiste kolommen voor die week. */
+Object.defineProperty(window, 'MEALS', {
+  get() { return colsFor(state.currentWeekKey); }
+});
 
 const SUGGESTIONS = {
   ontbijt: ['Yoghurt met granola','Havermout met fruit','Boterham met kaas','Croissant met choco','Pannenkoeken','Smoothie met banaan','Boterham met choco','Boterham met confituur','Roerei met spek','Wentelteefjes','Toast met avocado en ei','Speculoospasta op brood','Granola met melk','Muesli met yoghurt','Brioche met boter'],
@@ -988,9 +1040,23 @@ const SUGGESTIONS = {
   symptomen: ['Braken', 'Restrictie', 'Sporten']
 };
 
+/* Suggesties per tijdsblok, opgebouwd uit de bestaande lijsten hierboven
+   zodat er niets dubbel onderhouden moet worden. */
+(function buildBlockSuggestions() {
+  const uniq = arr => Array.from(new Set(arr));
+  SUGGESTIONS.b0810 = SUGGESTIONS.ontbijt;
+  SUGGESTIONS.b1012 = SUGGESTIONS.tussen;
+  SUGGESTIONS.b1214 = uniq([].concat(SUGGESTIONS.brood, SUGGESTIONS.wm));
+  SUGGESTIONS.b1416 = SUGGESTIONS.tussen;
+  SUGGESTIONS.b1618 = SUGGESTIONS.tussen;
+  SUGGESTIONS.b1820 = uniq([].concat(SUGGESTIONS.wm, SUGGESTIONS.brood));
+  SUGGESTIONS.b2022 = SUGGESTIONS.laatje;
+})();
+
 let state = {
   weeks: {},
   weekNotes: {},
+  weekSchema: {},
   currentWeekKey: getWeekKey(new Date())
 };
 
@@ -1034,24 +1100,16 @@ function shiftWeekKey(weekKey, days) {
 }
 
 function ensureWeek(weekKey) {
-  if (!state.weeks[weekKey]) {
-    state.weeks[weekKey] = {};
-    DAYS.forEach(day => {
-      state.weeks[weekKey][day.key] = {};
-      MEALS.forEach(meal => {
+  const cols = colsFor(weekKey);
+  if (!state.weeks[weekKey]) state.weeks[weekKey] = {};
+  DAYS.forEach(day => {
+    if (!state.weeks[weekKey][day.key]) state.weeks[weekKey][day.key] = {};
+    cols.forEach(meal => {
+      if (!Array.isArray(state.weeks[weekKey][day.key][meal.key])) {
         state.weeks[weekKey][day.key][meal.key] = [];
-      });
+      }
     });
-  } else {
-    DAYS.forEach(day => {
-      if (!state.weeks[weekKey][day.key]) state.weeks[weekKey][day.key] = {};
-      MEALS.forEach(meal => {
-        if (!Array.isArray(state.weeks[weekKey][day.key][meal.key])) {
-          state.weeks[weekKey][day.key][meal.key] = [];
-        }
-      });
-    });
-  }
+  });
 }
 
 function loadState() {
@@ -1062,7 +1120,10 @@ function loadState() {
     if (parsed && typeof parsed === 'object') {
       state.weeks = parsed.weeks || {};
       state.weekNotes = parsed.weekNotes || {};
+      state.weekSchema = parsed.weekSchema || {};
       state.currentWeekKey = parsed.currentWeekKey || getWeekKey(new Date());
+      // Weken die nog geen schema hebben, krijgen er nu een toegewezen.
+      Object.keys(state.weeks).forEach(wk => schemaFor(wk));
     }
   } catch(e) { console.warn('load failed', e); }
 }
@@ -1164,6 +1225,7 @@ function renderGrid() {
   const grid = document.getElementById('week-grid');
   const wk = state.currentWeekKey;
   const dates = weekDates(wk);
+  grid.style.setProperty('--cols', MEALS.length);
 
   let html = '<div class="col-header first">Dag</div>';
   MEALS.forEach(m => { html += `<div class="col-header">${escapeHTML(m.label)}</div>`; });
@@ -1535,6 +1597,8 @@ function buildPrintableHTML() {
   const today = new Date();
   const exportDate = `${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`;
 
+  const dense = MEALS.length > 6;
+
   const headerCells = MEALS.map(m =>
     `<th class="col-h">${escapeHTML(m.label)}</th>`
   ).join('');
@@ -1821,19 +1885,27 @@ function buildPrintableHTML() {
     color:#9B91E8;
     text-align:center;
   }
+  /* Tijdsblok-weken hebben 8 kolommen i.p.v. 6, dus iets compacter. */
+  .dense th.col-h{font-size:11px;padding:7px 3px;}
+  .dense td.day-h{width:52px;padding:10px 3px;}
+  .dense td.day-h .dn{font-size:11.5px;}
+  .dense td.meal-cell{padding:5px 4px;font-size:10.5px;}
+  .dense .line{font-size:10px;}
+
   @media print{
     body{background:#fff;padding:10px;}
     .page{box-shadow:none;padding:14px;}
     @page{size:A4 landscape;margin:10mm;}
     table{font-size:10px;}
     th, td{font-size:10px;padding:5px 6px;}
+    .dense th, .dense td{font-size:9px;padding:4px 3px;}
     .line{font-size:10px;}
     h1{font-size:22px;}
   }
 </style>
 </head>
 <body>
-  <div class="page">
+  <div class="page${dense ? ' dense' : ''}">
     <h1>${includeMovement ? 'Maaltijd- en bewegingsoverzicht' : 'Maaltijdoverzicht'}</h1>
     <div class="header-sub">week van ${rangeLabel}</div>
     <div class="header-date">geëxporteerd op ${exportDate}</div>
@@ -2244,6 +2316,8 @@ function handleImportFile(e) {
       showConfirm('data overschrijven?', 'alle huidige data wordt vervangen door de backup.', () => {
         state.weeks = parsed.weeks || {};
         state.weekNotes = parsed.weekNotes || {};
+        state.weekSchema = parsed.weekSchema || {};
+        Object.keys(state.weeks).forEach(wk => schemaFor(wk));
         if (parsed.currentWeekKey) state.currentWeekKey = parsed.currentWeekKey;
         render();
         saveState();
@@ -2258,6 +2332,7 @@ function resetEverything() {
   showConfirm('alles wissen?', 'alle weken, maaltijden, notities en symptomen worden definitief gewist. eerst exporteren als je iets wil bewaren!', () => {
     state.weeks = {};
     state.weekNotes = {};
+    state.weekSchema = {};
     state.currentWeekKey = todayKey();
     ensureWeek(state.currentWeekKey);
     render();

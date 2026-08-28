@@ -164,6 +164,33 @@
     cursor:default;
     font-size:18px;
   }
+  .bcell.heart-cell{
+    flex-direction:column;gap:7px;
+    cursor:default;padding:6px 4px;
+  }
+  .bcell.heart-cell.checked::after{content:none;}
+  .hc-name{
+    font-size:12.5px;line-height:1.2;
+    display:block;
+  }
+  .hearts{display:flex;gap:7px;align-items:center;justify-content:center;}
+  .heart{
+    width:27px;height:27px;padding:0;border:none;background:none;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;color:var(--pu5);
+    touch-action:manipulation;
+  }
+  .heart.off{color:var(--pu3);}
+  .heart svg{width:20px;height:20px;display:block;transition:transform 0.14s ease;}
+  .heart:active svg{transform:scale(0.84);}
+  .bcell.checked .heart{color:#fff;}
+  .bcell.checked .heart.off{color:rgba(255,255,255,0.55);}
+
+  .board-hint{
+    text-align:center;font-size:11.5px;color:var(--pu4);
+    font-style:italic;margin:-2px 0 12px;
+  }
+
   .bcell.win-flash{animation:winFlash 0.6s ease;}
   @keyframes winFlash{
     0%,100%{transform:scale(1);}
@@ -260,6 +287,14 @@
 
   .hint{font-size:11.5px;color:var(--pu4);margin-top:10px;text-align:center;font-style:italic;}
 
+  .add-note{
+    font-size:12px;color:var(--pu6);
+    background:var(--pu1);border:1.5px solid var(--pu2);
+    border-radius:10px;padding:8px 12px;margin-top:10px;
+    text-align:center;display:none;
+  }
+  .add-note.show{display:block;animation:fadeIn 0.2s ease;}
+
   .manage-tabs{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap;}
   .mtab{
     padding:6px 14px;border-radius:999px;
@@ -319,6 +354,10 @@
     .bingo-header{gap:6px;}
     .bingo-grid{gap:6px;}
     .bcell{font-size:11.5px;padding:5px;border-radius:11px;line-height:1.2;}
+    .hc-name{font-size:11px;}
+    .hearts{gap:5px;}
+    .heart{width:25px;height:25px;}
+    .heart svg{width:18px;height:18px;}
     .bingo-letter{font-size:21px;}
     .pbar-wrap{width:140px;}
     .win-banner{font-size:15px;padding:10px 14px;}
@@ -335,6 +374,10 @@
   }
   @media (max-width:360px){
     .bcell{font-size:10px;padding:3px;}
+    .hc-name{font-size:9.5px;}
+    .hearts{gap:4px;}
+    .heart{width:22px;height:22px;}
+    .heart svg{width:16px;height:16px;}
     .tab{font-size:11px;padding:7px 11px;}
   }
 </style>
@@ -361,6 +404,7 @@
     </div>
     <div class="bingo-header" id="hdr-morning"></div>
     <div class="bingo-grid" id="grid-morning"></div>
+    <p class="board-hint">Two hearts per spread &middot; two spreads on one slice</p>
     <div class="actions-row">
       <button class="btn-secondary" data-shuffle="morning">Shuffle Board</button>
       <button class="btn-secondary danger" data-reset="morning">Reset Checks</button>
@@ -411,6 +455,7 @@
           <input id="in-morning" type="text" placeholder="Add a morning spread..." maxlength="30" autocomplete="off">
           <button class="add-btn" data-add="morning">Add</button>
         </div>
+        <p class="add-note" id="note-morning"></p>
         <p class="hint">First 12 items appear on the board · purple dot = on board</p>
       </div>
 
@@ -422,6 +467,7 @@
           <input id="in-evening" type="text" placeholder="Add a laatje spread..." maxlength="30" autocomplete="off">
           <button class="add-btn" data-add="evening">Add</button>
         </div>
+        <p class="add-note" id="note-evening"></p>
         <p class="hint">First 12 items appear on the board · purple dot = on board</p>
       </div>
 
@@ -433,6 +479,7 @@
           <input id="in-cookies" type="text" placeholder="Add a cookie..." maxlength="30" autocomplete="off">
           <button class="add-btn" data-add="cookies">Add</button>
         </div>
+        <p class="add-note" id="note-cookies"></p>
         <p class="hint">First 12 items appear on the board · purple dot = on board</p>
       </div>
     </div>
@@ -471,8 +518,11 @@ const DEFAULTS = {
   cookies: ['Safari koeken','Speculoos','Stroopwafel','Oreo']
 };
 
+// Boards where each cell holds two independent hearts instead of one tap.
+const HEART_BOARD = 'morning';
+
 let state = {
-  morning: { items: [...DEFAULTS.morning], checked: [], wonShown: false },
+  morning: { items: [...DEFAULTS.morning], checked: [], wonShown: false, hearts: {} },
   evening: { items: [...DEFAULTS.evening], checked: [], wonShown: false },
   cookies: { items: [...DEFAULTS.cookies], checked: [], wonShown: false }
 };
@@ -487,11 +537,57 @@ function loadState() {
         state[b].items = Array.isArray(parsed[b].items) ? parsed[b].items : [...DEFAULTS[b]];
         state[b].checked = Array.isArray(parsed[b].checked) ? parsed[b].checked : [];
         state[b].wonShown = !!parsed[b].wonShown;
+        if (b === HEART_BOARD) state[b].hearts = (parsed[b] && typeof parsed[b].hearts === 'object' && parsed[b].hearts) ? parsed[b].hearts : {};
       }
     });
   } catch (e) {
     console.warn('Load Failed', e);
   }
+}
+
+// --- two hearts per cell on the morning board -------------------------------
+// hearts[i] = [bool, bool]. Both true => the cell counts as full for bingo.
+// A cell that was already checked before this update becomes two full hearts,
+// so nothing she had marked gets lost.
+function normalizeHearts() {
+  const src = (state[HEART_BOARD].hearts && typeof state[HEART_BOARD].hearts === 'object') ? state[HEART_BOARD].hearts : {};
+  const out = {};
+  for (let i = 0; i < 12; i++) {
+    const raw = src[i];
+    if (Array.isArray(raw)) out[i] = [raw[0] === true, raw[1] === true];
+    else out[i] = [false, false];
+  }
+  (Array.isArray(state[HEART_BOARD].checked) ? state[HEART_BOARD].checked : []).forEach(i => {
+    if (i >= 0 && i < 12 && !Array.isArray(src[i])) out[i] = [true, true];
+  });
+  state[HEART_BOARD].hearts = out;
+  syncChecked();
+}
+
+function syncChecked() {
+  const h = state[HEART_BOARD].hearts;
+  const full = [];
+  for (let i = 0; i < 12; i++) if (h[i] && h[i][0] && h[i][1]) full.push(i);
+  state[HEART_BOARD].checked = full;
+}
+
+function emptyHearts() {
+  const out = {};
+  for (let i = 0; i < 12; i++) out[i] = [false, false];
+  return out;
+}
+
+// --- items that should not be on any board ---------------------------------
+const REMOVED_ITEMS = /^\s*energ(y|ie)\s*-?\s*(drank|drink)s?\s*$/i;
+
+function stripRemovedItems() {
+  let changed = false;
+  ['morning','evening','cookies'].forEach(b => {
+    for (let i = state[b].items.length - 1; i >= 0; i--) {
+      if (REMOVED_ITEMS.test(state[b].items[i])) { removeItemAt(b, i); changed = true; }
+    }
+  });
+  if (changed) saveState();
 }
 
 let saveTimer = null;
@@ -502,6 +598,7 @@ function saveState() {
       const toSave = {};
       ['morning','evening','cookies'].forEach(b => {
         toSave[b] = { items: state[b].items, checked: state[b].checked, wonShown: state[b].wonShown };
+        if (b === HEART_BOARD) toSave[b].hearts = state[b].hearts;
       });
       localStorage.setItem(STORAGE_KEY, JSON.stringify(toSave));
       flashSaved();
@@ -572,6 +669,21 @@ function getBoardItems(b) {
   return items;
 }
 
+const HEART_ON = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.6C12 20.6 3.9 15.9 3.9 10.4A4.4 4.4 0 0 1 12 7.9a4.4 4.4 0 0 1 8.1 2.5c0 5.5-8.1 10.2-8.1 10.2z" fill="currentColor"/></svg>';
+const HEART_OFF = '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20.6C12 20.6 3.9 15.9 3.9 10.4A4.4 4.4 0 0 1 12 7.9a4.4 4.4 0 0 1 8.1 2.5c0 5.5-8.1 10.2-8.1 10.2z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>';
+
+function heartCellHTML(b, i, name, hearts) {
+  const full = hearts[0] && hearts[1];
+  const btns = [0,1].map(n => {
+    const on = hearts[n] === true;
+    return `<button class="heart ${on ? 'on' : 'off'}" data-heart="${b}" data-idx="${i}" data-n="${n}" `
+      + `aria-pressed="${on}" aria-label="${escapeHTML(name)}, spread ${n + 1}">${on ? HEART_ON : HEART_OFF}</button>`;
+  }).join('');
+  return `<div class="bcell heart-cell${full ? ' checked' : ''}">`
+    + `<span class="hc-name">${escapeHTML(name)}</span>`
+    + `<span class="hearts">${btns}</span></div>`;
+}
+
 function renderBoard(b) {
   const items = getBoardItems(b);
   const checked = state[b].checked;
@@ -582,13 +694,11 @@ function renderBoard(b) {
 
   document.getElementById('grid-' + b).innerHTML = items.map((it, i) => {
     const isEmpty = !it;
+    if (isEmpty) return '<div class="bcell empty">+</div>';
+    if (b === HEART_BOARD) return heartCellHTML(b, i, it, state[b].hearts[i] || [false, false]);
     const ck = checked.includes(i);
-    let cls = 'bcell';
-    if (isEmpty) cls += ' empty';
-    else if (ck) cls += ' checked';
-    const content = isEmpty ? '+' : escapeHTML(it);
-    const click = isEmpty ? '' : `data-toggle="${b}" data-idx="${i}"`;
-    return `<div class="${cls}" ${click}>${content}</div>`;
+    const cls = 'bcell' + (ck ? ' checked' : '');
+    return `<div class="${cls}" data-toggle="${b}" data-idx="${i}">${escapeHTML(it)}</div>`;
   }).join('');
 
   updateProgress(b);
@@ -619,6 +729,27 @@ function toggle(b, i) {
     renderBoard(b);
     setTimeout(() => checkBingo(b), 180);
   }
+  saveState();
+}
+
+function toggleHeart(b, i, n) {
+  const items = getBoardItems(b);
+  if (!items[i]) return;
+  const h = state[b].hearts[i] || (state[b].hearts[i] = [false, false]);
+  const wasFull = h[0] && h[1];
+  h[n] = !h[n];
+  const isFull = h[0] && h[1];
+  syncChecked();
+
+  if (h[n]) playCheck(); else playUncheck();
+
+  if (wasFull && !isFull) {
+    state[b].wonShown = false;
+    document.getElementById('win-' + b).classList.remove('show');
+  }
+
+  renderBoard(b);
+  if (!wasFull && isFull) setTimeout(() => checkBingo(b), 180);
   saveState();
 }
 
@@ -653,6 +784,7 @@ function flashWinningCells(b, line) {
 }
 
 function resetBoard(b) {
+  if (b === HEART_BOARD) state[b].hearts = emptyHearts();
   state[b].checked = [];
   state[b].wonShown = false;
   document.getElementById('win-' + b).classList.remove('show');
@@ -666,6 +798,7 @@ function shuffleBoard(b) {
     const j = Math.floor(Math.random() * (i + 1));
     [arr[i], arr[j]] = [arr[j], arr[i]];
   }
+  if (b === HEART_BOARD) state[b].hearts = emptyHearts();
   state[b].checked = [];
   state[b].wonShown = false;
   document.getElementById('win-' + b).classList.remove('show');
@@ -694,10 +827,25 @@ function renderList(b) {
   }).join('');
 }
 
+const noteTimers = {};
+function showAddNote(b, text) {
+  const el = document.getElementById('note-' + b);
+  if (!el) return;
+  el.textContent = text;
+  el.classList.add('show');
+  clearTimeout(noteTimers[b]);
+  noteTimers[b] = setTimeout(() => el.classList.remove('show'), 4000);
+}
+
 function addItem(b) {
   const inp = document.getElementById('in-' + b);
   const v = inp.value.trim();
   if (!v) return;
+  if (REMOVED_ITEMS.test(v)) {
+    inp.value = '';
+    showAddNote(b, 'Energy drinks aren\'t on the list for now.');
+    return;
+  }
   if (state[b].items.some(x => x.toLowerCase() === v.toLowerCase())) {
     inp.value = '';
     inp.style.borderColor = '#F09595';
@@ -711,11 +859,28 @@ function addItem(b) {
   saveState();
 }
 
-function delItem(b, i) {
+function removeItemAt(b, i) {
   state[b].items.splice(i, 1);
-  state[b].checked = state[b].checked
-    .map(c => c > i ? c - 1 : c)
-    .filter(c => c !== i && c >= 0 && c < 12);
+  if (b === HEART_BOARD) {
+    const h = state[b].hearts || {};
+    const out = {};
+    for (let k = 0; k < 12; k++) {
+      const src = k < i ? k : k + 1;
+      out[k] = (src < 12 && Array.isArray(h[src])) ? [h[src][0] === true, h[src][1] === true] : [false, false];
+    }
+    state[b].hearts = out;
+    syncChecked();
+  } else {
+    // filter before mapping: mapping first would shift a later check onto the
+    // deleted index and then drop it (bug in the previous version)
+    state[b].checked = state[b].checked
+      .filter(c => c !== i && c >= 0 && c < 12)
+      .map(c => c > i ? c - 1 : c);
+  }
+}
+
+function delItem(b, i) {
+  removeItemAt(b, i);
   renderList(b);
   renderBoard(b);
   saveState();
@@ -786,6 +951,11 @@ function handleImportFile(e) {
           state[b].items = Array.isArray(parsed[b].items) ? parsed[b].items : [...DEFAULTS[b]];
           state[b].checked = Array.isArray(parsed[b].checked) ? parsed[b].checked : [];
           state[b].wonShown = !!parsed[b].wonShown;
+          if (b === HEART_BOARD) state[b].hearts = (parsed[b].hearts && typeof parsed[b].hearts === 'object') ? parsed[b].hearts : {};
+        });
+        normalizeHearts();
+        stripRemovedItems();
+        ['morning','evening','cookies'].forEach(b => {
           renderBoard(b);
           renderList(b);
           document.getElementById('win-' + b).classList.remove('show');
@@ -803,7 +973,7 @@ function handleImportFile(e) {
 function resetEverything() {
   showModal('Start fresh?', 'This clears all your spreads, cookies and progress. Backup first if you want to keep them!', () => {
     state = {
-      morning: { items: [...DEFAULTS.morning], checked: [], wonShown: false },
+      morning: { items: [...DEFAULTS.morning], checked: [], wonShown: false, hearts: emptyHearts() },
       evening: { items: [...DEFAULTS.evening], checked: [], wonShown: false },
       cookies: { items: [...DEFAULTS.cookies], checked: [], wonShown: false }
     };
@@ -817,9 +987,10 @@ function resetEverything() {
 }
 
 document.addEventListener('click', e => {
-  const t = e.target.closest('[data-tab],[data-mtab],[data-toggle],[data-add],[data-del],[data-shuffle],[data-reset]');
+  const t = e.target.closest('[data-tab],[data-mtab],[data-toggle],[data-heart],[data-add],[data-del],[data-shuffle],[data-reset]');
   if (!t) return;
-  if (t.dataset.tab) switchTab(t.dataset.tab);
+  if (t.dataset.heart) toggleHeart(t.dataset.heart, parseInt(t.dataset.idx, 10), parseInt(t.dataset.n, 10));
+  else if (t.dataset.tab) switchTab(t.dataset.tab);
   else if (t.dataset.mtab) switchMTab(t.dataset.mtab);
   else if (t.dataset.toggle) toggle(t.dataset.toggle, parseInt(t.dataset.idx, 10));
   else if (t.dataset.add) addItem(t.dataset.add);
@@ -846,6 +1017,9 @@ try {
 } catch(e) {
   console.warn('loadState error', e);
 }
+
+normalizeHearts();
+stripRemovedItems();
 
 ['morning','evening','cookies'].forEach(b => {
   try {

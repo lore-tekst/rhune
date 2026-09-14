@@ -6,7 +6,7 @@
 <meta name="theme-color" content="#7165D6">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Meal Plan">
-<title>My Meal Plan</title>
+<title>My Week Plan</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='22' fill='%237165D6'/%3E%3Ctext x='50' y='66' font-family='Georgia,serif' font-size='52' font-weight='700' text-anchor='middle' fill='%23fff'%3EM%3C/text%3E%3C/svg%3E">
 <style>
   *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -150,6 +150,14 @@
 
   .col-header.first{
     background:var(--pu5);color:#fff;
+  }
+
+  /* 10 kolommen (9 tijdsblokken + Symptomen) past iets krapper. */
+  .week-grid.grid-dense2{
+    grid-template-columns:64px repeat(var(--cols,6),1fr);
+  }
+  .week-grid.grid-dense2 .col-header{
+    font-size:11px;padding:8px 3px;
   }
 
   .day-label{
@@ -848,7 +856,7 @@
 
 <div class="wrap">
   <div class="header">
-    <div class="app-title">My Meal Plan</div>
+    <div class="app-title">My Week Plan</div>
     <div class="app-sub">Een week vol lekkers</div>
     <div class="saved-indicator" id="saved-indicator">&nbsp;</div>
   </div>
@@ -996,24 +1004,53 @@ const MEALS_BLOCKS = [
   {key:'symptomen', label:'Symptomen', short:'Sympt.'}
 ];
 
+/* Derde schema: fijnmaziger, ongelijke tijdsblokken. 'c'-prefix zodat de
+   keys nooit botsen met de oude b0810-stijl keys hierboven. */
+const MEALS_BLOCKS_V2 = [
+  {key:'c0809', label:'8-9u',       short:'8-9u'},
+  {key:'c0910', label:'9-10.30u',   short:'9-10.30u'},
+  {key:'c1012', label:'10.30-12u',  short:'10.30-12u'},
+  {key:'c1213', label:'12-13u',     short:'12-13u'},
+  {key:'c1314', label:'13-14.30u',  short:'13-14.30u'},
+  {key:'c1416', label:'14.30-16u',  short:'14.30-16u'},
+  {key:'c1618', label:'16-18u',     short:'16-18u'},
+  {key:'c1820', label:'18-20u',     short:'18-20u'},
+  {key:'c20',   label:'Vanaf 20u',  short:'Vanaf 20u'},
+  {key:'symptomen', label:'Symptomen', short:'Sympt.'}
+];
+
 const LEGACY_MEAL_KEYS = ['ontbijt','wm','tussen','brood','laatje'];
+const LEGACY_BLOCK_V1_KEYS = ['b0810','b1012','b1214','b1416','b1618','b1820','b2022'];
 
 /* Bepaalt het schema van een week. Eenmaal vastgelegd verandert het niet
-   meer, zodat oude weken blijven zoals ze waren. */
+   meer, zodat oude weken blijven zoals ze waren. Nieuwe weken krijgen
+   voortaan blocks_v2 (de fijnmazige indeling); weken met bestaande data
+   onder oudere keys blijven op hun eigen schema hangen. */
 function schemaFor(weekKey) {
   if (!state.weekSchema) state.weekSchema = {};
   if (state.weekSchema[weekKey]) return state.weekSchema[weekKey];
 
-  let schema = 'blocks';
+  let schema = 'blocks_v2';
   const wk = state.weeks && state.weeks[weekKey];
   if (wk) {
     // Bestaat er al inhoud onder de oude maaltijd-keys? Dan is het een oude week.
-    outer:
+    outer1:
     for (const day of DAYS) {
       const d = wk[day.key];
       if (!d) continue;
       for (const k of LEGACY_MEAL_KEYS) {
-        if (Array.isArray(d[k]) && d[k].length > 0) { schema = 'meals'; break outer; }
+        if (Array.isArray(d[k]) && d[k].length > 0) { schema = 'meals'; break outer1; }
+      }
+    }
+    // Anders: bestaat er al data onder de v1-tijdsblokken? Dan blijft die week op v1.
+    if (schema !== 'meals') {
+      outer2:
+      for (const day of DAYS) {
+        const d = wk[day.key];
+        if (!d) continue;
+        for (const k of LEGACY_BLOCK_V1_KEYS) {
+          if (Array.isArray(d[k]) && d[k].length > 0) { schema = 'blocks'; break outer2; }
+        }
       }
     }
   }
@@ -1022,7 +1059,10 @@ function schemaFor(weekKey) {
 }
 
 function colsFor(weekKey) {
-  return schemaFor(weekKey) === 'meals' ? MEALS_LEGACY : MEALS_BLOCKS;
+  const schema = schemaFor(weekKey);
+  if (schema === 'meals') return MEALS_LEGACY;
+  if (schema === 'blocks') return MEALS_BLOCKS;
+  return MEALS_BLOCKS_V2;
 }
 
 /* Alle bestaande code werkt op de week die in beeld staat, dus MEALS
@@ -1051,6 +1091,17 @@ const SUGGESTIONS = {
   SUGGESTIONS.b1618 = SUGGESTIONS.tussen;
   SUGGESTIONS.b1820 = uniq([].concat(SUGGESTIONS.wm, SUGGESTIONS.brood));
   SUGGESTIONS.b2022 = SUGGESTIONS.laatje;
+
+  // blocks_v2 (fijnmazige indeling)
+  SUGGESTIONS.c0809 = SUGGESTIONS.ontbijt;
+  SUGGESTIONS.c0910 = SUGGESTIONS.tussen;
+  SUGGESTIONS.c1012 = SUGGESTIONS.tussen;
+  SUGGESTIONS.c1213 = uniq([].concat(SUGGESTIONS.brood, SUGGESTIONS.wm));
+  SUGGESTIONS.c1314 = SUGGESTIONS.tussen;
+  SUGGESTIONS.c1416 = SUGGESTIONS.tussen;
+  SUGGESTIONS.c1618 = SUGGESTIONS.tussen;
+  SUGGESTIONS.c1820 = uniq([].concat(SUGGESTIONS.wm, SUGGESTIONS.brood));
+  SUGGESTIONS.c20 = SUGGESTIONS.laatje;
 })();
 
 let state = {
@@ -1226,6 +1277,7 @@ function renderGrid() {
   const wk = state.currentWeekKey;
   const dates = weekDates(wk);
   grid.style.setProperty('--cols', MEALS.length);
+  grid.classList.toggle('grid-dense2', MEALS.length > 8);
 
   let html = '<div class="col-header first">Dag</div>';
   MEALS.forEach(m => { html += `<div class="col-header">${escapeHTML(m.label)}</div>`; });
@@ -1598,6 +1650,7 @@ function buildPrintableHTML() {
   const exportDate = `${today.getDate()}/${today.getMonth()+1}/${today.getFullYear()}`;
 
   const dense = MEALS.length > 6;
+  const xdense = MEALS.length > 8;
 
   const headerCells = MEALS.map(m =>
     `<th class="col-h">${escapeHTML(m.label)}</th>`
@@ -1892,20 +1945,31 @@ function buildPrintableHTML() {
   .dense td.meal-cell{padding:5px 4px;font-size:10.5px;}
   .dense .line{font-size:10px;}
 
+  /* blocks_v2 heeft 10 kolommen (9 tijdsblokken + Symptomen), dus nog
+     iets compacter dan de dense-variant hierboven. */
+  .page.xdense{padding:20px 12px;}
+  .xdense th.col-h{font-size:9.5px;padding:6px 2px;line-height:1.15;}
+  .xdense td.day-h{width:44px;padding:8px 2px;}
+  .xdense td.day-h .dn{font-size:10.5px;}
+  .xdense td.meal-cell{padding:4px 3px;font-size:9.5px;}
+  .xdense .line{font-size:9px;gap:3px;}
+  .xdense .check, .xdense .skip, .xdense .uncheck{width:12px;height:12px;}
+
   @media print{
     body{background:#fff;padding:10px;}
     .page{box-shadow:none;padding:14px;}
-    @page{size:A4 landscape;margin:10mm;}
+    @page{size:A4 landscape;margin:8mm;}
     table{font-size:10px;}
     th, td{font-size:10px;padding:5px 6px;}
     .dense th, .dense td{font-size:9px;padding:4px 3px;}
+    .xdense th, .xdense td{font-size:8px;padding:3px 2px;}
     .line{font-size:10px;}
     h1{font-size:22px;}
   }
 </style>
 </head>
 <body>
-  <div class="page${dense ? ' dense' : ''}">
+  <div class="page${dense ? ' dense' : ''}${xdense ? ' xdense' : ''}">
     <h1>${includeMovement ? 'Maaltijd- en bewegingsoverzicht' : 'Maaltijdoverzicht'}</h1>
     <div class="header-sub">week van ${rangeLabel}</div>
     <div class="header-date">geëxporteerd op ${exportDate}</div>

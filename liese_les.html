@@ -1,0 +1,811 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Welk leesteken? — oefenen met punt, vraagteken en uitroepteken</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+
+  --sky:#CFE3FF;
+  --sky-deep:#A9CBFF;
+  --card:#FFFFFF;
+  --ink:#1B2A4A;
+  --ink-soft:#5A6C8C;
+  --punt:#1FA97E;
+  --vraag:#F0932B;
+  --uitroep:#E44D75;
+  --goud:#FFC93C;
+  --lijn:#DCE7F7;
+  --knop-bg:#1B2A4A;
+  --knop-tekst:#FFFFFF;
+  --knop-rand:#0C1729;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --sky:#12203A;
+    --sky-deep:#0C1729;
+    --card:#1B2B47;
+    --ink:#EAF2FF;
+    --ink-soft:#9FB4D6;
+    --lijn:#2B3F63;
+    --knop-bg:#FFD75E;
+    --knop-tekst:#2A1F00;
+    --knop-rand:#C79A00;
+  }
+}
+:root[data-theme="dark"]{
+  --sky:#12203A; --sky-deep:#0C1729; --card:#1B2B47;
+  --ink:#EAF2FF; --ink-soft:#9FB4D6; --lijn:#2B3F63;
+  --knop-bg:#FFD75E; --knop-tekst:#2A1F00; --knop-rand:#C79A00;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;
+  min-height:100%;
+  background:var(--sky);
+  background-image:radial-gradient(circle at 50% -10%, var(--card) 0%, var(--sky) 45%, var(--sky-deep) 100%);
+  color:var(--ink);
+  font-family:"Fredoka","Trebuchet MS",Verdana,sans-serif;
+  font-weight:500;
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:720px;margin:0 auto;padding:18px 16px 40px}
+
+/* kop + meter */
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:clamp(1.25rem,4.5vw,1.7rem);font-weight:700;margin:0;letter-spacing:-.01em}
+h1 .p{color:var(--punt)}h1 .v{color:var(--vraag)}h1 .u{color:var(--uitroep)}
+
+.meter{background:var(--card);border-radius:22px;padding:14px 16px;box-shadow:0 6px 0 var(--lijn);margin-bottom:18px}
+.meter-top{display:flex;justify-content:space-between;align-items:baseline;font-size:1rem;color:var(--ink-soft);margin-bottom:9px}
+.meter-top strong{color:var(--ink);font-size:1.35rem;font-weight:700}
+.bar{display:flex;flex-wrap:wrap;gap:1px;justify-content:center;line-height:1}
+.seg{font-size:1.5rem;color:var(--lijn);transition:color .25s ease, transform .25s ease;
+  text-shadow:0 1px 0 rgba(0,0,0,.08)}
+.seg.good{color:var(--goud);animation:pop .4s cubic-bezier(.2,1.6,.4,1)}
+.seg.bad{color:var(--uitroep);opacity:.5}
+.seg.now{transform:scale(1.3);color:var(--ink-soft)}
+
+/* zin */
+.card{background:var(--card);border-radius:28px;padding:26px 20px 24px;box-shadow:0 8px 0 var(--lijn);text-align:center}
+.teller{color:var(--ink-soft);font-size:.95rem;margin:0 0 14px}
+.zin{font-size:clamp(1.5rem,6.2vw,2.3rem);font-weight:600;line-height:1.35;margin:0 0 6px;word-break:break-word}
+.gat{display:inline-block;min-width:1.1em;border-bottom:5px solid var(--sky-deep);color:var(--ink)}
+.gat.punt{color:var(--punt);border-color:transparent}
+.gat.vraag{color:var(--vraag);border-color:transparent}
+.gat.uitroep{color:var(--uitroep);border-color:transparent}
+.pop{animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+
+.luister{margin:18px auto 4px;display:inline-flex;align-items:center;gap:10px;border:none;cursor:pointer;
+  background:var(--goud);color:#3A2A00;font-family:inherit;font-weight:700;font-size:1.15rem;
+  padding:14px 26px;border-radius:999px;box-shadow:0 5px 0 #D9A400}
+.luister:active{transform:translateY(3px);box-shadow:0 2px 0 #D9A400}
+.luister .speaker{font-size:1.4rem}
+.luister[aria-pressed="true"]{background:#FFE08A}
+.tip{color:var(--ink-soft);font-size:.95rem;margin:10px 0 0}
+.stemrij{margin:12px 0 0;display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;
+  color:var(--ink-soft);font-size:.9rem}
+.stemrij select{font-family:inherit;font-size:.9rem;color:var(--ink);background:var(--card);
+  border:2px solid var(--lijn);border-radius:12px;padding:6px 10px;max-width:15rem}
+.waarschuwing{margin:12px auto 0;max-width:42ch;background:#FFF3D6;color:#6A4A00;border-radius:16px;
+  padding:12px 14px;font-size:.92rem;line-height:1.45;text-align:left}
+
+/* knoppen */
+.keuze{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+.keuze button{cursor:pointer;border:none;font-family:inherit;color:#fff;border-radius:22px;padding:16px 6px 13px;
+  display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .12s ease}
+.keuze button .teken{font-size:2.6rem;font-weight:700;line-height:1}
+.keuze button .naam{font-size:.95rem;font-weight:500}
+.keuze button:active{transform:translateY(4px)}
+.keuze button:disabled{cursor:default;opacity:.45}
+.keuze button.gekozen{opacity:1;outline:4px solid var(--ink);outline-offset:3px}
+#b-punt{background:var(--punt);box-shadow:0 6px 0 #178664}
+#b-vraag{background:var(--vraag);box-shadow:0 6px 0 #C7741C}
+#b-uitroep{background:var(--uitroep);box-shadow:0 6px 0 #B93B5D}
+
+/* feedback */
+.feedback{margin-top:20px;min-height:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.feedback p{margin:0;font-size:1.15rem;font-weight:600}
+.feedback .uitleg{font-size:1rem;font-weight:400;color:var(--ink-soft);max-width:34ch}
+.verder{border:none;cursor:pointer;font-family:inherit;font-weight:700;font-size:1.2rem;
+  color:var(--knop-tekst);background:var(--knop-bg);
+  padding:15px 34px;border-radius:999px;box-shadow:0 5px 0 var(--knop-rand)}
+.verder:active{transform:translateY(3px);box-shadow:0 2px 0 var(--knop-rand)}
+.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+
+/* einde */
+.einde{text-align:center}
+.sterren{font-size:3rem;letter-spacing:6px;margin:6px 0 2px;color:var(--goud)}
+.einde h2{font-size:1.6rem;margin:4px 0 6px}
+.einde .score{font-size:1.15rem;color:var(--ink-soft);margin:0 0 20px}
+.record{color:var(--ink-soft);font-size:.95rem;margin-top:14px}
+button:focus-visible,a:focus-visible{outline:4px solid var(--ink);outline-offset:3px}
+.hidden{display:none}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:360px){.keuze button .teken{font-size:2.1rem}.keuze button .naam{font-size:.8rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Welk leesteken hoort erbij<span class="v">?</span></h1>
+  </header>
+
+  <div class="meter">
+    <div class="meter-top">
+      <span>Jouw sterren</span>
+      <span><strong id="scoreNu">0</strong> / <span id="scoreMax">10</span></span>
+    </div>
+    <div class="bar" id="bar"></div>
+  </div>
+
+  <main>
+    <section class="card" id="spel">
+      <p class="teller" id="teller">Zin 1 van 10</p>
+      <p class="zin" id="zin"></p>
+      <button class="luister" id="luister"><span class="speaker">🔊</span> Luister naar de zin</button>
+      <p class="tip">Hoor je een vraag, een uitroep of een gewone zin?</p>
+
+      <div class="stemrij hidden" id="stemrij">
+        <label for="stem">Nederlandse stem:</label>
+        <select id="stem"></select>
+      </div>
+      <div class="waarschuwing hidden" id="geenStem"></div>
+
+      <div class="keuze" id="keuze">
+        <button id="b-punt" data-t="."><span class="teken">.</span><span class="naam">punt</span></button>
+        <button id="b-vraag" data-t="?"><span class="teken">?</span><span class="naam">vraagteken</span></button>
+        <button id="b-uitroep" data-t="!"><span class="teken">!</span><span class="naam">uitroepteken</span></button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+    </section>
+
+    <section class="card einde hidden" id="einde">
+      <div class="sterren" id="sterren"></div>
+      <h2 id="eindeTitel"></h2>
+      <p class="score" id="eindeScore"></p>
+      <button class="verder" id="opnieuw">Nog een ronde</button>
+      <p class="record" id="record"></p>
+    </section>
+  </main>
+</div>
+
+<script>
+const ZINNEN = [
+  {z:"Ik eet een appel", t:"."},
+  {z:"De hond slaapt op de mat", t:"."},
+  {z:"Mijn fiets is blauw", t:"."},
+  {z:"We gaan met de klas naar het bos", t:"."},
+  {z:"De zon schijnt vandaag", t:"."},
+  {z:"Papa kookt soep", t:"."},
+  {z:"Het konijn springt in het gras", t:"."},
+  {z:"Ik heb een nieuwe jas", t:"."},
+  {z:"De juf leest een verhaal voor", t:"."},
+  {z:"Mijn broer speelt buiten", t:"."},
+  {z:"De poes drinkt melk", t:"."},
+  {z:"Wij wonen in een groot huis", t:"."},
+  {z:"Het regent op het dak", t:"."},
+  {z:"Ik kan al heel goed lezen", t:"."},
+  {z:"De bal ligt onder de bank", t:"."},
+  {z:"Oma bakt pannenkoeken", t:"."},
+
+  {z:"Hoe heet jij", t:"?"},
+  {z:"Waar is mijn boek", t:"?"},
+  {z:"Wil je met mij spelen", t:"?"},
+  {z:"Mag ik een koekje", t:"?"},
+  {z:"Wanneer gaan we zwemmen", t:"?"},
+  {z:"Heb jij een hond", t:"?"},
+  {z:"Wie komt er mee", t:"?"},
+  {z:"Waarom lach je zo", t:"?"},
+  {z:"Is het al pauze", t:"?"},
+  {z:"Hoeveel appels liggen er", t:"?"},
+  {z:"Wat doe jij daar", t:"?"},
+  {z:"Kom je vanavond eten", t:"?"},
+  {z:"Weet jij hoe laat het is", t:"?"},
+  {z:"Welke kleur vind jij mooi", t:"?"},
+  {z:"Mogen wij naar buiten", t:"?"},
+  {z:"Wie heeft mijn pen gezien", t:"?"},
+
+  {z:"Wat een mooie tekening", t:"!"},
+  {z:"Pas op voor de auto", t:"!"},
+  {z:"Hoera, ik heb gewonnen", t:"!"},
+  {z:"Kom snel hier", t:"!"},
+  {z:"Au, dat doet pijn", t:"!"},
+  {z:"Wat is die toren hoog", t:"!"},
+  {z:"Gefeliciteerd met je verjaardag", t:"!"},
+  {z:"Wacht even op mij", t:"!"},
+  {z:"Wat een lekkere taart", t:"!"},
+  {z:"Stop, niet doen", t:"!"},
+  {z:"Kijk, er zit een vogel", t:"!"},
+  {z:"Wat gaaf, we winnen", t:"!"},
+  {z:"Help, ik val", t:"!"},
+  {z:"Wat ben jij snel", t:"!"},
+  {z:"Doe de deur eens dicht", t:"!"},
+  {z:"Oei, dat is glad", t:"!"}
+];
+
+const UITLEG = {
+  ".":"Dit is een gewone zin. Die vertelt iets. Daar zet je een punt achter.",
+  "?":"Hier wordt iets gevraagd. Je stem gaat omhoog. Daar hoort een vraagteken.",
+  "!":"Dit is een uitroep: blij, verrast of een waarschuwing. Daar hoort een uitroepteken."
+};
+const GOED = ["Knap gedaan","Helemaal juist","Super","Yes, die zit","Prima gehoord"];
+const FOUT = ["Bijna","Net niet","Probeer de volgende maar"];
+const NAAM = {".":"een punt","?":"een vraagteken","!":"een uitroepteken"};
+
+const RONDE = 25;
+let vragen = [], index = 0, score = 0, beantwoord = false;
+
+const el = id => document.getElementById(id);
+const bar = el("bar"), zinEl = el("zin"), fbEl = el("feedback"), keuzeEl = el("keuze");
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function bouwBar(){
+  bar.innerHTML = "";
+  for(let i=0;i<RONDE;i++){const d=document.createElement("div");d.className="seg";d.textContent="\u2605";bar.appendChild(d);}
+  el("scoreMax").textContent = RONDE;
+}
+
+function start(){
+  const perType = t => shuffle(ZINNEN.filter(v=>v.t===t));
+  const p = perType("."), v = perType("?"), u = perType("!");
+  vragen = shuffle([...p.slice(0,9), ...v.slice(0,8), ...u.slice(0,8)]);
+  index = 0; score = 0; beantwoord = false;
+  el("scoreNu").textContent = "0";
+  bouwBar();
+  el("einde").classList.add("hidden");
+  el("spel").classList.remove("hidden");
+  toon();
+}
+
+function toon(){
+  beantwoord = false;
+  const q = vragen[index];
+  el("teller").textContent = "Zin " + (index+1) + " van " + RONDE;
+  zinEl.innerHTML = q.z + ' <span class="gat" id="gat">&nbsp;</span>';
+  fbEl.innerHTML = "";
+  [...keuzeEl.children].forEach(b=>{b.disabled=false;b.classList.remove("gekozen");});
+  [...bar.children].forEach((s,i)=>s.classList.toggle("now", i===index));
+  window.speechSynthesis && window.speechSynthesis.cancel();
+}
+
+let nlStemmen = [], actieveStem = null;
+
+function vulStemmen(){
+  if(!("speechSynthesis" in window)) return;
+  const alle = window.speechSynthesis.getVoices() || [];
+  nlStemmen = alle.filter(v => /^nl/i.test(v.lang));
+  const rij = el("stemrij"), waarschuwing = el("geenStem"), sel = el("stem");
+
+  if(nlStemmen.length === 0){
+    rij.classList.add("hidden");
+    waarschuwing.classList.remove("hidden");
+    waarschuwing.innerHTML = alle.length === 0
+      ? "Dit toestel heeft nog geen voorleesstem geladen. Herlaad de pagina, of gebruik Chrome, Edge of Safari."
+      : "Er staat geen Nederlandse stem op dit toestel. De zinnen klinken nu met een buitenlands accent. "
+        + "Voeg Nederlands toe bij de spraakinstellingen van het toestel (zie de uitleg van je leerkracht) en herlaad daarna deze pagina.";
+    actieveStem = null;
+    return;
+  }
+
+  waarschuwing.classList.add("hidden");
+  rij.classList.remove("hidden");
+  let bewaard = null;
+  try{ bewaard = localStorage.getItem("leestekens-stem"); }catch(e){}
+  sel.innerHTML = "";
+  nlStemmen.forEach((v,i)=>{
+    const o = document.createElement("option");
+    o.value = v.name;
+    o.textContent = v.name + (/be/i.test(v.lang) ? " (Vlaams)" : " (Nederlands)");
+    sel.appendChild(o);
+  });
+  const keuze = nlStemmen.find(v=>v.name===bewaard)
+    || nlStemmen.find(v=>/nl-BE/i.test(v.lang))
+    || nlStemmen[0];
+  actieveStem = keuze;
+  sel.value = keuze.name;
+}
+
+el("stem").addEventListener("change", e=>{
+  actieveStem = nlStemmen.find(v=>v.name===e.target.value) || actieveStem;
+  try{ localStorage.setItem("leestekens-stem", e.target.value); }catch(err){}
+});
+
+function spreek(q){
+  if(!("speechSynthesis" in window) || !q) return;
+  try{
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(q.z + q.t);
+    u.lang = actieveStem ? actieveStem.lang : "nl-NL";
+    u.rate = 0.85;
+    if(actieveStem) u.voice = actieveStem;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+if("speechSynthesis" in window){
+  vulStemmen();
+  window.speechSynthesis.onvoiceschanged = vulStemmen;
+  setTimeout(vulStemmen, 800);
+}
+
+el("luister").addEventListener("click", ()=> spreek(vragen[index]));
+
+keuzeEl.addEventListener("click", e=>{
+  const knop = e.target.closest("button");
+  if(!knop || beantwoord) return;
+  beantwoord = true;
+  const gekozen = knop.dataset.t;
+  const juist = vragen[index].t;
+  knop.classList.add("gekozen");
+  [...keuzeEl.children].forEach(b=>b.disabled=true);
+
+  const gat = el("gat");
+  gat.textContent = juist;
+  gat.className = "gat pop " + (juist==="."?"punt":juist==="?"?"vraag":"uitroep");
+
+  const seg = bar.children[index];
+  seg.classList.remove("now");
+  const goed = gekozen === juist;
+  seg.classList.add(goed ? "good" : "bad");
+  if(goed){ score++; el("scoreNu").textContent = score; }
+  else { el("spel").classList.add("shake"); setTimeout(()=>el("spel").classList.remove("shake"),420); }
+
+  const kop = goed ? GOED[Math.floor(Math.random()*GOED.length)] + "!" 
+                   : FOUT[Math.floor(Math.random()*FOUT.length)] + ": hier hoort " + NAAM[juist] + ".";
+  fbEl.innerHTML = '<p>' + (goed?"⭐ ":"") + kop + '</p><p class="uitleg">' + UITLEG[juist] + '</p>';
+  const verder = document.createElement("button");
+  verder.className = "verder";
+  verder.textContent = index === RONDE-1 ? "Bekijk je sterren" : "Volgende zin";
+  verder.addEventListener("click", volgende);
+  fbEl.appendChild(verder);
+  verder.focus();
+});
+
+function volgende(){
+  if(index === RONDE-1) eindscherm();
+  else { index++; toon(); }
+}
+
+function eindscherm(){
+  el("spel").classList.add("hidden");
+  const e = el("einde");
+  e.classList.remove("hidden");
+  const sterren = score >= 23 ? 3 : score >= 19 ? 2 : score >= 14 ? 1 : 0;
+  el("sterren").textContent = "★★★".slice(0,sterren) + "☆☆☆".slice(0,3-sterren);
+  el("eindeTitel").textContent =
+    sterren===3 ? "Leestekenkampioen!" :
+    sterren===2 ? "Heel goed bezig!" :
+    sterren===1 ? "Goed geprobeerd!" : "Samen oefenen helpt!";
+  el("eindeScore").textContent = "Je had " + score + " van de " + RONDE + " zinnen juist.";
+  let best = 0;
+  try{
+    best = parseInt(localStorage.getItem("leestekens-record")||"0",10) || 0;
+    if(score > best){ best = score; localStorage.setItem("leestekens-record", String(score)); }
+  }catch(err){ best = score; }
+  el("record").textContent = "Jouw beste ronde tot nu toe: " + best + " van de " + RONDE + ".";
+}
+
+el("opnieuw").addEventListener("click", start);
+start();
+</script>
+</body>
+</html><!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Welk leesteken? — oefenen met punt, vraagteken en uitroepteken</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+
+  --sky:#CFE3FF;
+  --sky-deep:#A9CBFF;
+  --card:#FFFFFF;
+  --ink:#1B2A4A;
+  --ink-soft:#5A6C8C;
+  --punt:#1FA97E;
+  --vraag:#F0932B;
+  --uitroep:#E44D75;
+  --goud:#FFC93C;
+  --lijn:#DCE7F7;
+  --knop-bg:#1B2A4A;
+  --knop-tekst:#FFFFFF;
+  --knop-rand:#0C1729;
+}
+:root:not([data-theme="light"]){
+  @media (prefers-color-scheme: dark){
+    --sky:#12203A;
+    --sky-deep:#0C1729;
+    --card:#1B2B47;
+    --ink:#EAF2FF;
+    --ink-soft:#9FB4D6;
+    --lijn:#2B3F63;
+    --knop-bg:#FFD75E;
+    --knop-tekst:#2A1F00;
+    --knop-rand:#C79A00;
+  }
+}
+:root[data-theme="dark"]{
+  --sky:#12203A; --sky-deep:#0C1729; --card:#1B2B47;
+  --ink:#EAF2FF; --ink-soft:#9FB4D6; --lijn:#2B3F63;
+  --knop-bg:#FFD75E; --knop-tekst:#2A1F00; --knop-rand:#C79A00;
+}
+*,*::before,*::after{box-sizing:inherit}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{
+  margin:0;
+  min-height:100%;
+  background:var(--sky);
+  background-image:radial-gradient(circle at 50% -10%, var(--card) 0%, var(--sky) 45%, var(--sky-deep) 100%);
+  color:var(--ink);
+  font-family:"Fredoka","Trebuchet MS",Verdana,sans-serif;
+  font-weight:500;
+  -webkit-text-size-adjust:100%;
+}
+.wrap{max-width:720px;margin:0 auto;padding:18px 16px 40px}
+
+/* kop + meter */
+header{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:14px}
+h1{font-size:clamp(1.25rem,4.5vw,1.7rem);font-weight:700;margin:0;letter-spacing:-.01em}
+h1 .p{color:var(--punt)}h1 .v{color:var(--vraag)}h1 .u{color:var(--uitroep)}
+
+.meter{background:var(--card);border-radius:22px;padding:14px 16px;box-shadow:0 6px 0 var(--lijn);margin-bottom:18px}
+.meter-top{display:flex;justify-content:space-between;align-items:baseline;font-size:1rem;color:var(--ink-soft);margin-bottom:9px}
+.meter-top strong{color:var(--ink);font-size:1.35rem;font-weight:700}
+.bar{display:flex;flex-wrap:wrap;gap:1px;justify-content:center;line-height:1}
+.seg{font-size:1.5rem;color:var(--lijn);transition:color .25s ease, transform .25s ease;
+  text-shadow:0 1px 0 rgba(0,0,0,.08)}
+.seg.good{color:var(--goud);animation:pop .4s cubic-bezier(.2,1.6,.4,1)}
+.seg.bad{color:var(--uitroep);opacity:.5}
+.seg.now{transform:scale(1.3);color:var(--ink-soft)}
+
+/* zin */
+.card{background:var(--card);border-radius:28px;padding:26px 20px 24px;box-shadow:0 8px 0 var(--lijn);text-align:center}
+.teller{color:var(--ink-soft);font-size:.95rem;margin:0 0 14px}
+.zin{font-size:clamp(1.5rem,6.2vw,2.3rem);font-weight:600;line-height:1.35;margin:0 0 6px;word-break:break-word}
+.gat{display:inline-block;min-width:1.1em;border-bottom:5px solid var(--sky-deep);color:var(--ink)}
+.gat.punt{color:var(--punt);border-color:transparent}
+.gat.vraag{color:var(--vraag);border-color:transparent}
+.gat.uitroep{color:var(--uitroep);border-color:transparent}
+.pop{animation:pop .45s cubic-bezier(.2,1.6,.4,1)}
+@keyframes pop{from{transform:scale(.3);opacity:0}to{transform:scale(1);opacity:1}}
+
+.luister{margin:18px auto 4px;display:inline-flex;align-items:center;gap:10px;border:none;cursor:pointer;
+  background:var(--goud);color:#3A2A00;font-family:inherit;font-weight:700;font-size:1.15rem;
+  padding:14px 26px;border-radius:999px;box-shadow:0 5px 0 #D9A400}
+.luister:active{transform:translateY(3px);box-shadow:0 2px 0 #D9A400}
+.luister .speaker{font-size:1.4rem}
+.luister[aria-pressed="true"]{background:#FFE08A}
+.tip{color:var(--ink-soft);font-size:.95rem;margin:10px 0 0}
+.stemrij{margin:12px 0 0;display:flex;justify-content:center;align-items:center;gap:8px;flex-wrap:wrap;
+  color:var(--ink-soft);font-size:.9rem}
+.stemrij select{font-family:inherit;font-size:.9rem;color:var(--ink);background:var(--card);
+  border:2px solid var(--lijn);border-radius:12px;padding:6px 10px;max-width:15rem}
+.waarschuwing{margin:12px auto 0;max-width:42ch;background:#FFF3D6;color:#6A4A00;border-radius:16px;
+  padding:12px 14px;font-size:.92rem;line-height:1.45;text-align:left}
+
+/* knoppen */
+.keuze{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:20px}
+.keuze button{cursor:pointer;border:none;font-family:inherit;color:#fff;border-radius:22px;padding:16px 6px 13px;
+  display:flex;flex-direction:column;align-items:center;gap:2px;transition:transform .12s ease}
+.keuze button .teken{font-size:2.6rem;font-weight:700;line-height:1}
+.keuze button .naam{font-size:.95rem;font-weight:500}
+.keuze button:active{transform:translateY(4px)}
+.keuze button:disabled{cursor:default;opacity:.45}
+.keuze button.gekozen{opacity:1;outline:4px solid var(--ink);outline-offset:3px}
+#b-punt{background:var(--punt);box-shadow:0 6px 0 #178664}
+#b-vraag{background:var(--vraag);box-shadow:0 6px 0 #C7741C}
+#b-uitroep{background:var(--uitroep);box-shadow:0 6px 0 #B93B5D}
+
+/* feedback */
+.feedback{margin-top:20px;min-height:74px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.feedback p{margin:0;font-size:1.15rem;font-weight:600}
+.feedback .uitleg{font-size:1rem;font-weight:400;color:var(--ink-soft);max-width:34ch}
+.verder{border:none;cursor:pointer;font-family:inherit;font-weight:700;font-size:1.2rem;
+  color:var(--knop-tekst);background:var(--knop-bg);
+  padding:15px 34px;border-radius:999px;box-shadow:0 5px 0 var(--knop-rand)}
+.verder:active{transform:translateY(3px);box-shadow:0 2px 0 var(--knop-rand)}
+.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-9px)}40%{transform:translateX(9px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+
+/* einde */
+.einde{text-align:center}
+.sterren{font-size:3rem;letter-spacing:6px;margin:6px 0 2px;color:var(--goud)}
+.einde h2{font-size:1.6rem;margin:4px 0 6px}
+.einde .score{font-size:1.15rem;color:var(--ink-soft);margin:0 0 20px}
+.record{color:var(--ink-soft);font-size:.95rem;margin-top:14px}
+button:focus-visible,a:focus-visible{outline:4px solid var(--ink);outline-offset:3px}
+.hidden{display:none}
+@media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important}}
+@media (max-width:360px){.keuze button .teken{font-size:2.1rem}.keuze button .naam{font-size:.8rem}}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>Welk leesteken hoort erbij<span class="v">?</span></h1>
+  </header>
+
+  <div class="meter">
+    <div class="meter-top">
+      <span>Jouw sterren</span>
+      <span><strong id="scoreNu">0</strong> / <span id="scoreMax">10</span></span>
+    </div>
+    <div class="bar" id="bar"></div>
+  </div>
+
+  <main>
+    <section class="card" id="spel">
+      <p class="teller" id="teller">Zin 1 van 10</p>
+      <p class="zin" id="zin"></p>
+      <button class="luister" id="luister"><span class="speaker">🔊</span> Luister naar de zin</button>
+      <p class="tip">Hoor je een vraag, een uitroep of een gewone zin?</p>
+
+      <div class="stemrij hidden" id="stemrij">
+        <label for="stem">Nederlandse stem:</label>
+        <select id="stem"></select>
+      </div>
+      <div class="waarschuwing hidden" id="geenStem"></div>
+
+      <div class="keuze" id="keuze">
+        <button id="b-punt" data-t="."><span class="teken">.</span><span class="naam">punt</span></button>
+        <button id="b-vraag" data-t="?"><span class="teken">?</span><span class="naam">vraagteken</span></button>
+        <button id="b-uitroep" data-t="!"><span class="teken">!</span><span class="naam">uitroepteken</span></button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+    </section>
+
+    <section class="card einde hidden" id="einde">
+      <div class="sterren" id="sterren"></div>
+      <h2 id="eindeTitel"></h2>
+      <p class="score" id="eindeScore"></p>
+      <button class="verder" id="opnieuw">Nog een ronde</button>
+      <p class="record" id="record"></p>
+    </section>
+  </main>
+</div>
+
+<script>
+const ZINNEN = [
+  {z:"Ik eet een appel", t:"."},
+  {z:"De hond slaapt op de mat", t:"."},
+  {z:"Mijn fiets is blauw", t:"."},
+  {z:"We gaan met de klas naar het bos", t:"."},
+  {z:"De zon schijnt vandaag", t:"."},
+  {z:"Papa kookt soep", t:"."},
+  {z:"Het konijn springt in het gras", t:"."},
+  {z:"Ik heb een nieuwe jas", t:"."},
+  {z:"De juf leest een verhaal voor", t:"."},
+  {z:"Mijn broer speelt buiten", t:"."},
+  {z:"De poes drinkt melk", t:"."},
+  {z:"Wij wonen in een groot huis", t:"."},
+  {z:"Het regent op het dak", t:"."},
+  {z:"Ik kan al heel goed lezen", t:"."},
+  {z:"De bal ligt onder de bank", t:"."},
+  {z:"Oma bakt pannenkoeken", t:"."},
+
+  {z:"Hoe heet jij", t:"?"},
+  {z:"Waar is mijn boek", t:"?"},
+  {z:"Wil je met mij spelen", t:"?"},
+  {z:"Mag ik een koekje", t:"?"},
+  {z:"Wanneer gaan we zwemmen", t:"?"},
+  {z:"Heb jij een hond", t:"?"},
+  {z:"Wie komt er mee", t:"?"},
+  {z:"Waarom lach je zo", t:"?"},
+  {z:"Is het al pauze", t:"?"},
+  {z:"Hoeveel appels liggen er", t:"?"},
+  {z:"Wat doe jij daar", t:"?"},
+  {z:"Kom je vanavond eten", t:"?"},
+  {z:"Weet jij hoe laat het is", t:"?"},
+  {z:"Welke kleur vind jij mooi", t:"?"},
+  {z:"Mogen wij naar buiten", t:"?"},
+  {z:"Wie heeft mijn pen gezien", t:"?"},
+
+  {z:"Wat een mooie tekening", t:"!"},
+  {z:"Pas op voor de auto", t:"!"},
+  {z:"Hoera, ik heb gewonnen", t:"!"},
+  {z:"Kom snel hier", t:"!"},
+  {z:"Au, dat doet pijn", t:"!"},
+  {z:"Wat is die toren hoog", t:"!"},
+  {z:"Gefeliciteerd met je verjaardag", t:"!"},
+  {z:"Wacht even op mij", t:"!"},
+  {z:"Wat een lekkere taart", t:"!"},
+  {z:"Stop, niet doen", t:"!"},
+  {z:"Kijk, er zit een vogel", t:"!"},
+  {z:"Wat gaaf, we winnen", t:"!"},
+  {z:"Help, ik val", t:"!"},
+  {z:"Wat ben jij snel", t:"!"},
+  {z:"Doe de deur eens dicht", t:"!"},
+  {z:"Oei, dat is glad", t:"!"}
+];
+
+const UITLEG = {
+  ".":"Dit is een gewone zin. Die vertelt iets. Daar zet je een punt achter.",
+  "?":"Hier wordt iets gevraagd. Je stem gaat omhoog. Daar hoort een vraagteken.",
+  "!":"Dit is een uitroep: blij, verrast of een waarschuwing. Daar hoort een uitroepteken."
+};
+const GOED = ["Knap gedaan","Helemaal juist","Super","Yes, die zit","Prima gehoord"];
+const FOUT = ["Bijna","Net niet","Probeer de volgende maar"];
+const NAAM = {".":"een punt","?":"een vraagteken","!":"een uitroepteken"};
+
+const RONDE = 25;
+let vragen = [], index = 0, score = 0, beantwoord = false;
+
+const el = id => document.getElementById(id);
+const bar = el("bar"), zinEl = el("zin"), fbEl = el("feedback"), keuzeEl = el("keuze");
+
+function shuffle(a){a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+function bouwBar(){
+  bar.innerHTML = "";
+  for(let i=0;i<RONDE;i++){const d=document.createElement("div");d.className="seg";d.textContent="\u2605";bar.appendChild(d);}
+  el("scoreMax").textContent = RONDE;
+}
+
+function start(){
+  const perType = t => shuffle(ZINNEN.filter(v=>v.t===t));
+  const p = perType("."), v = perType("?"), u = perType("!");
+  vragen = shuffle([...p.slice(0,9), ...v.slice(0,8), ...u.slice(0,8)]);
+  index = 0; score = 0; beantwoord = false;
+  el("scoreNu").textContent = "0";
+  bouwBar();
+  el("einde").classList.add("hidden");
+  el("spel").classList.remove("hidden");
+  toon();
+}
+
+function toon(){
+  beantwoord = false;
+  const q = vragen[index];
+  el("teller").textContent = "Zin " + (index+1) + " van " + RONDE;
+  zinEl.innerHTML = q.z + ' <span class="gat" id="gat">&nbsp;</span>';
+  fbEl.innerHTML = "";
+  [...keuzeEl.children].forEach(b=>{b.disabled=false;b.classList.remove("gekozen");});
+  [...bar.children].forEach((s,i)=>s.classList.toggle("now", i===index));
+  window.speechSynthesis && window.speechSynthesis.cancel();
+}
+
+let nlStemmen = [], actieveStem = null;
+
+function vulStemmen(){
+  if(!("speechSynthesis" in window)) return;
+  const alle = window.speechSynthesis.getVoices() || [];
+  nlStemmen = alle.filter(v => /^nl/i.test(v.lang));
+  const rij = el("stemrij"), waarschuwing = el("geenStem"), sel = el("stem");
+
+  if(nlStemmen.length === 0){
+    rij.classList.add("hidden");
+    waarschuwing.classList.remove("hidden");
+    waarschuwing.innerHTML = alle.length === 0
+      ? "Dit toestel heeft nog geen voorleesstem geladen. Herlaad de pagina, of gebruik Chrome, Edge of Safari."
+      : "Er staat geen Nederlandse stem op dit toestel. De zinnen klinken nu met een buitenlands accent. "
+        + "Voeg Nederlands toe bij de spraakinstellingen van het toestel (zie de uitleg van je leerkracht) en herlaad daarna deze pagina.";
+    actieveStem = null;
+    return;
+  }
+
+  waarschuwing.classList.add("hidden");
+  rij.classList.remove("hidden");
+  let bewaard = null;
+  try{ bewaard = localStorage.getItem("leestekens-stem"); }catch(e){}
+  sel.innerHTML = "";
+  nlStemmen.forEach((v,i)=>{
+    const o = document.createElement("option");
+    o.value = v.name;
+    o.textContent = v.name + (/be/i.test(v.lang) ? " (Vlaams)" : " (Nederlands)");
+    sel.appendChild(o);
+  });
+  const keuze = nlStemmen.find(v=>v.name===bewaard)
+    || nlStemmen.find(v=>/nl-BE/i.test(v.lang))
+    || nlStemmen[0];
+  actieveStem = keuze;
+  sel.value = keuze.name;
+}
+
+el("stem").addEventListener("change", e=>{
+  actieveStem = nlStemmen.find(v=>v.name===e.target.value) || actieveStem;
+  try{ localStorage.setItem("leestekens-stem", e.target.value); }catch(err){}
+});
+
+function spreek(q){
+  if(!("speechSynthesis" in window) || !q) return;
+  try{
+    window.speechSynthesis.cancel();
+    const u = new SpeechSynthesisUtterance(q.z + q.t);
+    u.lang = actieveStem ? actieveStem.lang : "nl-NL";
+    u.rate = 0.85;
+    if(actieveStem) u.voice = actieveStem;
+    window.speechSynthesis.speak(u);
+  }catch(e){}
+}
+
+if("speechSynthesis" in window){
+  vulStemmen();
+  window.speechSynthesis.onvoiceschanged = vulStemmen;
+  setTimeout(vulStemmen, 800);
+}
+
+el("luister").addEventListener("click", ()=> spreek(vragen[index]));
+
+keuzeEl.addEventListener("click", e=>{
+  const knop = e.target.closest("button");
+  if(!knop || beantwoord) return;
+  beantwoord = true;
+  const gekozen = knop.dataset.t;
+  const juist = vragen[index].t;
+  knop.classList.add("gekozen");
+  [...keuzeEl.children].forEach(b=>b.disabled=true);
+
+  const gat = el("gat");
+  gat.textContent = juist;
+  gat.className = "gat pop " + (juist==="."?"punt":juist==="?"?"vraag":"uitroep");
+
+  const seg = bar.children[index];
+  seg.classList.remove("now");
+  const goed = gekozen === juist;
+  seg.classList.add(goed ? "good" : "bad");
+  if(goed){ score++; el("scoreNu").textContent = score; }
+  else { el("spel").classList.add("shake"); setTimeout(()=>el("spel").classList.remove("shake"),420); }
+
+  const kop = goed ? GOED[Math.floor(Math.random()*GOED.length)] + "!" 
+                   : FOUT[Math.floor(Math.random()*FOUT.length)] + ": hier hoort " + NAAM[juist] + ".";
+  fbEl.innerHTML = '<p>' + (goed?"⭐ ":"") + kop + '</p><p class="uitleg">' + UITLEG[juist] + '</p>';
+  const verder = document.createElement("button");
+  verder.className = "verder";
+  verder.textContent = index === RONDE-1 ? "Bekijk je sterren" : "Volgende zin";
+  verder.addEventListener("click", volgende);
+  fbEl.appendChild(verder);
+  verder.focus();
+});
+
+function volgende(){
+  if(index === RONDE-1) eindscherm();
+  else { index++; toon(); }
+}
+
+function eindscherm(){
+  el("spel").classList.add("hidden");
+  const e = el("einde");
+  e.classList.remove("hidden");
+  const sterren = score >= 23 ? 3 : score >= 19 ? 2 : score >= 14 ? 1 : 0;
+  el("sterren").textContent = "★★★".slice(0,sterren) + "☆☆☆".slice(0,3-sterren);
+  el("eindeTitel").textContent =
+    sterren===3 ? "Leestekenkampioen!" :
+    sterren===2 ? "Heel goed bezig!" :
+    sterren===1 ? "Goed geprobeerd!" : "Samen oefenen helpt!";
+  el("eindeScore").textContent = "Je had " + score + " van de " + RONDE + " zinnen juist.";
+  let best = 0;
+  try{
+    best = parseInt(localStorage.getItem("leestekens-record")||"0",10) || 0;
+    if(score > best){ best = score; localStorage.setItem("leestekens-record", String(score)); }
+  }catch(err){ best = score; }
+  el("record").textContent = "Jouw beste ronde tot nu toe: " + best + " van de " + RONDE + ".";
+}
+
+el("opnieuw").addEventListener("click", start);
+start();
+</script>
+</body>
+</html>

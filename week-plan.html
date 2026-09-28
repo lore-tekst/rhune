@@ -1057,7 +1057,10 @@
   .wp-sheet.on{transform:none;}
   .wp-sheetbg.on{display:block;}
   .wp-sheet h2{font-family:var(--font-serif);font-size:23px;color:var(--pu7);text-align:center;}
-  .wp-sheet p{font-size:12.5px;color:var(--pu5);text-align:center;margin:3px 0 14px;font-style:italic;word-break:break-word;}
+  .wp-sheet p{font-size:12.5px;color:var(--pu5);text-align:center;margin:0 0 10px;font-style:italic;word-break:break-word;}
+  .wp-sheet h2{margin-bottom:10px;}
+  .wp-sheet .wp-h2b{margin:20px 0 4px;padding-top:16px;border-top:1px solid var(--pu2);}
+  .wp-sheet .wp-copyhint{font-style:normal;margin-bottom:10px;}
   .wp-opts{display:grid;grid-template-columns:1fr 1fr;gap:7px;}
   .wp-opt{
     display:flex;align-items:center;gap:9px;
@@ -1109,6 +1112,28 @@
 
   /* fix: de losse .mobile-view{display:none} stond ná de telefoon-regel en won altijd */
   @media (max-width:760px){ .mobile-view{display:block;} }
+
+  /* kopieerraster in de sheet */
+  .wp-copygrid{
+    display:grid;grid-template-columns:54px repeat(7,minmax(0,1fr));gap:3px;
+    --bg2:var(--pu2);--bd:var(--pu5);--ink:var(--pu7);
+  }
+  .wp-copygrid button{font-family:var(--font-sans);cursor:pointer;touch-action:manipulation;border:0;}
+  .wp-cg-head{background:var(--pu1);color:var(--pu5);border-radius:8px;padding:4px 0;font-size:10.5px;display:flex;flex-direction:column;align-items:center;}
+  .wp-cg-head b{font-family:var(--font-serif);font-size:15px;color:var(--pu7);line-height:1.1;}
+  .wp-cg-rail{background:var(--pu1);color:var(--pu6);border-radius:8px;font-size:10.5px;font-weight:500;text-align:left;padding:0 6px;min-height:36px;}
+  .wp-cg-tile{
+    min-height:36px;border-radius:8px;background:#fff;border:1.5px solid var(--pu2)!important;
+    font-size:13px;color:var(--ink);
+  }
+  .wp-cg-tile.sel{background:var(--bg2);border-color:var(--bd)!important;font-weight:700;}
+  .wp-cg-tile.src{background:var(--bd);color:#fff;border-color:var(--bd)!important;cursor:default;}
+  .wp-cg-tile.has{background:var(--pu0);color:var(--pu4);cursor:default;}
+  .wp-copygo{
+    display:block;width:100%;margin-top:12px;padding:12px;border-radius:999px;border:0;
+    background:var(--pu5);color:#fff;font-family:var(--font-sans);font-size:14px;font-weight:500;cursor:pointer;
+  }
+  .wp-copygo:disabled{background:var(--pu3);cursor:default;}
 </style>
 </head>
 <body>
@@ -1122,7 +1147,7 @@
 
 <div class="wrap" id="panel-meal" role="tabpanel" aria-labelledby="tab-meal" hidden>
   <div class="header">
-    <div class="app-title">My Meal Plan</div>
+    <div class="app-title">My Week Plan</div>
     <div class="app-sub">Een week vol lekkers</div>
     <div class="saved-indicator" id="saved-indicator">&nbsp;</div>
   </div>
@@ -1197,11 +1222,15 @@
 </div>
 
 <div class="wp-sheetbg" id="wp-sheetbg"></div>
-<div class="wp-sheet" id="wp-sheet" role="dialog" aria-modal="true" aria-label="Soort kiezen">
-  <h2>Welke soort?</h2>
+<div class="wp-sheet" id="wp-sheet" role="dialog" aria-modal="true" aria-label="Soort kiezen of kopiëren">
   <p id="wp-sheetwhen"></p>
+  <h2>Welke soort?</h2>
   <div class="wp-opts" id="wp-opts"></div>
-  <button class="wp-cancel" id="wp-cancel">Annuleren</button>
+  <h2 class="wp-h2b">Kopiëren naar…</h2>
+  <p class="wp-copyhint">Tik de vakjes aan. Tik op een dag of een uur om de hele kolom of rij te kiezen.</p>
+  <div class="wp-copygrid" id="wp-copygrid"></div>
+  <button class="wp-copygo" id="wp-copygo" disabled>Kies vakjes</button>
+  <button class="wp-cancel" id="wp-cancel">Klaar</button>
 </div>
 <div class="wp-toast" id="wp-toast"></div>
 
@@ -1451,6 +1480,20 @@ function playBlub() {
 
 const LEGACY_MEAL_KEYS = ['ontbijt','wm','tussen','brood','laatje'];
 const LEGACY_BLOCK_V2_KEYS = ['c0809','c0910','c1012','c1213','c1314','c1416','c1618','c1820','c20'];
+const LEGACY_BLOCK_V3_KEYS = ['d0810','d1012','d1214','d1416','d1618','d1820','d20'];
+
+/* Vijfde schema (huidig): momenten in plaats van uren. 'hint' staat
+   niet in de kolomkop, maar helpt in de pop-up en bij het omzetten om
+   de drie tussendoortjes uit elkaar te houden. */
+const MEALS_BLOCKS_V4 = [
+  {key:'e_ochtend', label:'Ochtend',    short:'Ochtend'},
+  {key:'e_tus1',    label:'Tussendoor', short:'Tussendoor', hint:'na de ochtend'},
+  {key:'e_middag',  label:'Middag',     short:'Middag'},
+  {key:'e_tus2',    label:'Tussendoor', short:'Tussendoor', hint:'na de middag'},
+  {key:'e_avond',   label:'Avond',      short:'Avond'},
+  {key:'e_tus3',    label:'Tussendoor', short:'Tussendoor', hint:'na de avond'},
+  {key:'energie',   label:'Cafeïne',    short:'Cafeïne'}
+];
 const LEGACY_BLOCK_V1_KEYS = ['b0810','b1012','b1214','b1416','b1618','b1820','b2022'];
 
 /* Bepaalt het schema van een week. Eenmaal vastgelegd verandert het niet
@@ -1461,7 +1504,7 @@ function schemaFor(weekKey) {
   if (!state.weekSchema) state.weekSchema = {};
   if (state.weekSchema[weekKey]) return state.weekSchema[weekKey];
 
-  let schema = 'blocks_v3';
+  let schema = 'blocks_v4';
   const wk = state.weeks && state.weeks[weekKey];
   if (wk) {
     // Bestaat er al inhoud onder de oude maaltijd-keys? Dan is het een oude week.
@@ -1485,13 +1528,24 @@ function schemaFor(weekKey) {
       }
     }
     // Of data onder de v2-tijdsblokken? Dan blijft die week op v2.
-    if (schema === 'blocks_v3') {
+    if (schema === 'blocks_v4') {
       outer3:
       for (const day of DAYS) {
         const d = wk[day.key];
         if (!d) continue;
         for (const k of LEGACY_BLOCK_V2_KEYS) {
           if (Array.isArray(d[k]) && d[k].length > 0) { schema = 'blocks_v2'; break outer3; }
+        }
+      }
+    }
+    // Of data onder de v3-uren (8-10u …)? Dan blijft die week op v3.
+    if (schema === 'blocks_v4') {
+      outer4:
+      for (const day of DAYS) {
+        const d = wk[day.key];
+        if (!d) continue;
+        for (const k of LEGACY_BLOCK_V3_KEYS) {
+          if (Array.isArray(d[k]) && d[k].length > 0) { schema = 'blocks_v3'; break outer4; }
         }
       }
     }
@@ -1507,11 +1561,12 @@ function schemaFor(weekKey) {
    - Staat er wel iets? Dan niets automatisch doen, maar een melding
      tonen met een knop, zodat zij zelf kiest.                        */
 const UPGRADE_MAP = {
-  meals:     { ontbijt:'d0810', brood:'d1214', tussen:'d1416', wm:'d1820', laatje:'d20' },
-  blocks:    { b0810:'d0810', b1012:'d1012', b1214:'d1214', b1416:'d1416', b1618:'d1618', b1820:'d1820', b2022:'d20' },
-  blocks_v2: { c0809:'d0810', c0910:'d0810', c1012:'d1012', c1213:'d1214', c1314:'d1214', c1416:'d1416', c1618:'d1618', c1820:'d1820', c20:'d20' }
+  meals:     { ontbijt:'e_ochtend', tussen:'e_tus2', brood:'e_middag', wm:'e_avond', laatje:'e_tus3' },
+  blocks:    { b0810:'e_ochtend', b1012:'e_tus1', b1214:'e_middag', b1416:'e_tus2', b1618:'e_tus2', b1820:'e_avond', b2022:'e_tus3' },
+  blocks_v2: { c0809:'e_ochtend', c0910:'e_ochtend', c1012:'e_tus1', c1213:'e_middag', c1314:'e_middag', c1416:'e_tus2', c1618:'e_tus2', c1820:'e_avond', c20:'e_tus3' },
+  blocks_v3: { d0810:'e_ochtend', d1012:'e_tus1', d1214:'e_middag', d1416:'e_tus2', d1618:'e_tus2', d1820:'e_avond', d20:'e_tus3' }
 };
-const OLD_SCHEMA_COLS = { meals: () => MEALS_LEGACY, blocks: () => MEALS_BLOCKS, blocks_v2: () => MEALS_BLOCKS_V2 };
+const OLD_SCHEMA_COLS = { meals: () => MEALS_LEGACY, blocks: () => MEALS_BLOCKS, blocks_v2: () => MEALS_BLOCKS_V2, blocks_v3: () => MEALS_BLOCKS_V3 };
 /* Symptomen telt mee: staat daar iets, dan wordt een week nooit stil
    omgezet, zodat die gegevens niet ongemerkt uit beeld verdwijnen. */
 function oldContentIn(weekKey) {
@@ -1543,7 +1598,7 @@ function autoUpgradeEmptyWeeks() {
   const allOld = [].concat(...Object.values(UPGRADE_MAP).map(m => Object.keys(m)));
   Object.keys(state.weekSchema || {}).forEach(wk => {
     if (needsUpgrade(wk) && oldContentIn(wk) === 0) {
-      state.weekSchema[wk] = 'blocks_v3';
+      state.weekSchema[wk] = 'blocks_v4';
       const w = state.weeks[wk];
       if (w) DAYS.forEach(day => { if (w[day.key]) allOld.forEach(k => { delete w[day.key][k]; }); });
     }
@@ -1575,14 +1630,14 @@ function upgradeWeek(weekKey) {
     });
     if (Object.keys(nd).length) notes[day.key] = nd;
   });
-  state.weekSchema[weekKey] = 'blocks_v3';
+  state.weekSchema[weekKey] = 'blocks_v4';
 }
 function upgradeMappingText(schema) {
   const map = UPGRADE_MAP[schema];
   const from = OLD_SCHEMA_COLS[schema]();
   return Object.keys(map).map(k => {
-    const a = from.find(m => m.key === k), b = MEALS_BLOCKS_V3.find(m => m.key === map[k]);
-    return `${a.short} → ${b.label}`;
+    const a = from.find(m => m.key === k), b = MEALS_BLOCKS_V4.find(m => m.key === map[k]);
+    return `${a.short} → ${b.label}${b.hint ? ' (' + b.hint + ')' : ''}`;
   }).join(', ');
 }
 function renderSchemaBanner() {
@@ -1601,7 +1656,8 @@ function colsFor(weekKey) {
   if (schema === 'meals') return MEALS_LEGACY;
   if (schema === 'blocks') return MEALS_BLOCKS;
   if (schema === 'blocks_v2') return MEALS_BLOCKS_V2;
-  return MEALS_BLOCKS_V3;
+  if (schema === 'blocks_v3') return MEALS_BLOCKS_V3;
+  return MEALS_BLOCKS_V4;
 }
 
 /* Alle bestaande code werkt op de week die in beeld staat, dus MEALS
@@ -1651,6 +1707,14 @@ const SUGGESTIONS = {
   SUGGESTIONS.d1820 = uniq([].concat(SUGGESTIONS.wm, SUGGESTIONS.brood));
   SUGGESTIONS.d20 = SUGGESTIONS.laatje;
   SUGGESTIONS.energie = [];
+
+  // blocks_v4
+  SUGGESTIONS.e_ochtend = SUGGESTIONS.ontbijt;
+  SUGGESTIONS.e_tus1 = SUGGESTIONS.tussen;
+  SUGGESTIONS.e_middag = uniq([].concat(SUGGESTIONS.brood, SUGGESTIONS.wm));
+  SUGGESTIONS.e_tus2 = SUGGESTIONS.tussen;
+  SUGGESTIONS.e_avond = uniq([].concat(SUGGESTIONS.wm, SUGGESTIONS.brood));
+  SUGGESTIONS.e_tus3 = SUGGESTIONS.laatje;
 })();
 
 let state = {
@@ -1953,7 +2017,7 @@ function openModal(dayKey, mealKey) {
   const dt = dates[dayIdx];
 
   document.getElementById('modal-day-label').textContent =
-    `${day.long.toLowerCase()} · ${dt.getDate()}/${dt.getMonth()+1}`;
+    `${day.long.toLowerCase()} · ${dt.getDate()}/${dt.getMonth()+1}${meal.hint ? ' · ' + meal.hint : ''}`;
   document.getElementById('modal-title').textContent = meal.label;
   document.getElementById('modal').classList.toggle('is-energy', mealKey === ENERGY_KEY);
   document.getElementById('energy-hint').hidden = mealKey !== ENERGY_KEY;
@@ -3277,7 +3341,7 @@ function makeRow(box,item){
   var row=el('div','wp-row '+(item?'item':'blank'));
   var sw=el('button','wp-sw','<i></i>');
   sw.type='button';
-  sw.setAttribute('aria-label','Soort kiezen');
+  sw.setAttribute('aria-label','Soort kiezen of kopiëren');
   sw.addEventListener('mousedown',function(e){ e.preventDefault(); });
   sw.addEventListener('click',function(){ if(item) openSheet(box,item,row); });
   var body=el('div','wp-body');
@@ -3439,14 +3503,20 @@ $('wp-cats-edit').addEventListener('click',function(){
   this.textContent=open?'klaar':'namen aanpassen';
 });
 
-/* ── kleurkeuze ── */
-var sheetCtx=null;
+/* ── soort kiezen + kopiëren ──
+   Kopieën zijn zelfstandig: later één aanpassen verandert de andere
+   niet. Dat is voorspelbaar; niets wijzigt ergens anders ongemerkt. */
+var sheetCtx=null, copySel={};
 function openSheet(box,item,row){
-  sheetCtx={box:box,item:item,row:row};
+  sheetCtx={box:box,item:item,row:row}; copySel={};
   var d=fromIso(box.dataset.wk), di=(d.getDay()+6)%7;
   var bl=BLOCKS.filter(function(b){return b.id===box.dataset.wb;})[0];
   $('wp-sheetwhen').textContent=DLONG[di].toLowerCase()+' · '+bl.time+' · "'+(item.t.trim()||'…')+'"';
-  var o=$('wp-opts'); o.innerHTML='';
+  renderOpts(); renderCopyGrid();
+  $('wp-sheet').classList.add('on'); $('wp-sheetbg').classList.add('on');
+}
+function renderOpts(){
+  var item=sheetCtx.item, o=$('wp-opts'); o.innerHTML='';
   store.cats.forEach(function(c){
     var b=el('button','wp-opt'+(item.c===c.id?' cur':''),'<i></i>'+esc(c.name));
     b.type='button'; b.dataset.c=c.id; tint(b,c.id);
@@ -3456,16 +3526,68 @@ function openSheet(box,item,row){
   var none=el('button','wp-opt none'+(!PAL[item.c]?' cur':''),'<i></i>Geen kleur');
   none.type='button'; none.addEventListener('click',function(){ pick(''); });
   o.appendChild(none);
-  $('wp-sheet').classList.add('on'); $('wp-sheetbg').classList.add('on');
 }
-function closeSheet(){ $('wp-sheet').classList.remove('on'); $('wp-sheetbg').classList.remove('on'); sheetCtx=null; }
+function closeSheet(){ $('wp-sheet').classList.remove('on'); $('wp-sheetbg').classList.remove('on'); sheetCtx=null; copySel={}; }
+/* kleur kiezen sluit niet meer meteen: zo kan ze daarna ook kopiëren */
 function pick(cid){
   if(!sheetCtx) return;
   sheetCtx.item.c=cid;
   paintRow(sheetCtx.row,sheetCtx.item);
-  save(); closeSheet(); renderChips();
+  save(); renderChips(); renderOpts(); renderCopyGrid();
   if(focusCat) setFocus(focusCat);
 }
+function slotState(k,bid){
+  var ctx=sheetCtx;
+  if(k===ctx.box.dataset.wk && bid===ctx.box.dataset.wb) return 'src';
+  var t=ctx.item.t.trim().toLowerCase();
+  if(peek(k,bid).i.some(function(x){ return x.t.trim().toLowerCase()===t; })) return 'has';
+  return copySel[k+'|'+bid]?'sel':'free';
+}
+function toggleMany(keys){
+  var free=keys.filter(function(p){ var a=p.split('|'); var st=slotState(a[0],a[1]); return st==='free'||st==='sel'; });
+  var allOn=free.length && free.every(function(p){ return copySel[p]; });
+  free.forEach(function(p){ if(allOn) delete copySel[p]; else copySel[p]=1; });
+  renderCopyGrid();
+}
+function renderCopyGrid(){
+  var g=$('wp-copygrid'); g.innerHTML='';
+  var p=PAL[sheetCtx.item.c];
+  if(p) tint(g,sheetCtx.item.c); else tint(g,'');
+  g.appendChild(el('div','wp-cg-corner',''));
+  var days=[]; for(var i=0;i<7;i++) days.push(iso(addDays(monday,i)));
+  days.forEach(function(k,i){
+    var h=el('button','wp-cg-head',DSHORT[i]+'<b>'+fromIso(k).getDate()+'</b>'); h.type='button';
+    h.setAttribute('aria-label','Hele '+DLONG[i].toLowerCase()+' kiezen');
+    h.addEventListener('click',function(){ toggleMany(BLOCKS.map(function(b){return k+'|'+b.id;})); });
+    g.appendChild(h);
+  });
+  BLOCKS.forEach(function(bl){
+    var r=el('button','wp-cg-rail',bl.time.replace('u','')); r.type='button';
+    r.setAttribute('aria-label',bl.time+' op alle dagen kiezen');
+    r.addEventListener('click',function(){ toggleMany(days.map(function(k){return k+'|'+bl.id;})); });
+    g.appendChild(r);
+    days.forEach(function(k,i){
+      var st=slotState(k,bl.id);
+      var t=el('button','wp-cg-tile '+st, st==='src'?'●':st==='has'?'✓':st==='sel'?'+':'');
+      t.type='button';
+      t.setAttribute('aria-label',DLONG[i]+' '+bl.time+(st==='src'?', hier staat het':st==='has'?', staat er al':st==='sel'?', gekozen':''));
+      if(st==='src'||st==='has') t.disabled=true;
+      else t.addEventListener('click',function(){ var key=k+'|'+bl.id; if(copySel[key]) delete copySel[key]; else copySel[key]=1; renderCopyGrid(); });
+      g.appendChild(t);
+    });
+  });
+  var n=Object.keys(copySel).length, go=$('wp-copygo');
+  go.disabled=!n;
+  go.textContent=n?('Kopieer naar '+n+' '+(n===1?'vakje':'vakjes')):'Kies vakjes';
+}
+$('wp-copygo').addEventListener('click',function(){
+  if(!sheetCtx) return;
+  var keys=Object.keys(copySel); if(!keys.length) return;
+  var item=sheetCtx.item;
+  keys.forEach(function(p){ var a=p.split('|'); cell(a[0],a[1]).i.push({t:item.t,c:item.c||''}); });
+  save(); closeSheet(); refresh();
+  toast('Gekopieerd naar '+keys.length+' '+(keys.length===1?'vakje':'vakjes'));
+});
 $('wp-sheetbg').addEventListener('click',closeSheet);
 $('wp-cancel').addEventListener('click',closeSheet);
 
